@@ -1,4 +1,4 @@
-package dev.randolph.model;
+package dev.randolph.model.enums;
 
 public enum EventType {
     UIVERSITY,

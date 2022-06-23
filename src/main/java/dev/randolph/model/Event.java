@@ -1,9 +1,12 @@
 package dev.randolph.model;
 
+import dev.randolph.model.enums.EventType;
+
 public class Event {
     
     private int id;
     private EventType type;
+    private double reimPercent;
     
     public Event() {}
 
@@ -29,8 +32,16 @@ public class Event {
         this.type = type;
     }
 
+    public double getReimPercent() {
+        return reimPercent;
+    }
+
+    public void setReimPercent(double reimPercent) {
+        this.reimPercent = reimPercent;
+    }
+
     @Override
     public String toString() {
-        return "Event [id=" + id + ", type=" + type + "]";
+        return "Event [id=" + id + ", type=" + type + ", reimPercent=" + reimPercent + "]";
     };
 }

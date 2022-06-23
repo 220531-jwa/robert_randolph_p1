@@ -1,5 +1,7 @@
 package dev.randolph.model;
 
+import dev.randolph.model.enums.GradeFormatType;
+
 public class GradeFormat {
     
     private int id;

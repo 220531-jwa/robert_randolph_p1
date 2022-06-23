@@ -1,5 +1,7 @@
 package dev.randolph.model;
 
+import dev.randolph.model.enums.EmployeeType;
+
 public class Employee {
     
     private int id;
