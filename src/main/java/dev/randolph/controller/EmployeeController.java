@@ -7,15 +7,45 @@ import io.javalin.http.Context;
 
 public class EmployeeController {
     
-    EmployeeService es = new EmployeeService();
+    private EmployeeService es = new EmployeeService();
     
-    public void loginWithUsername(Context c) {
-        // Get username
-        // Get password
+    /*
+     * === POST ===
+     */
+    
+    /**
+     * Handles request to login from the user.
+     * Takes username and password from body.
+     * If login was successful password is replaced by a temporary token (handled in service)
+     * @return 200 with employee information if login was successful, and 401 otherwise.
+     */
+    public void loginWithCredentials(Context c) {
+        // Getting username and password
+        Employee e = c.bodyAsClass(Employee.class);
+        
+        // Getting employee from database
+        e = es.loginWithCredentials(e.getUsername(), e.getPassword());
+        
+        // Checking if username and password were correct
+        if (e != null) {
+            // Login successful
+            c.json(e);      // Sending back employee information
+            c.status(200);
+        }
+        else {
+            // Login failed
+            c.status(401);
+        }
     }
+    
+    /*
+     * === GET ===
+     */
     
     /**
      * Retrieves employee information with the given id
+     * Takes Employee id as query
+     * TODO: This may not be necessary if login works as expected
      */
     public void getEmployeeById(Context c) {
         // Getting input
