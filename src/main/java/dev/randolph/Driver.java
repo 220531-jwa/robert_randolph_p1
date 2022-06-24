@@ -3,6 +3,8 @@ package dev.randolph;
 import static io.javalin.apibuilder.ApiBuilder.*;
 
 import dev.randolph.controller.EmployeeController;
+import dev.randolph.controller.EventController;
+import dev.randolph.controller.GradeFormatController;
 import dev.randolph.controller.RequestController;
 import io.javalin.Javalin;
 
@@ -13,8 +15,10 @@ public class Driver {
         Javalin app = Javalin.create();
         
         // Creating controllers
-        EmployeeController ec = new EmployeeController();
-        RequestController rc = new RequestController();
+        EmployeeController employeeC = new EmployeeController();
+        RequestController requestC = new RequestController();
+        EventController eventC = new EventController();
+        GradeFormatController gradeFC = new GradeFormatController();
         
         // Starting server
         app.start(8080);
@@ -22,16 +26,23 @@ public class Driver {
         // Handling end-points
         app.routes(() -> {
             path("/login", () -> {
-                post(ec::loginWithUsername);
+                post(employeeC::loginWithUsername);
             });
             path("logout", () -> {
                 // No clue
             });
             path("/employee", () -> {
-                get(ec::getEmployeeById);
+                get(employeeC::getEmployeeById);
             });
             path("/request", () -> {
-                get(rc::getAllEmployeeRequests);
+                post(requestC::createNewRequest);
+                get(requestC::getAllEmployeeRequests);
+            });
+            path("/event", () ->{
+                get(eventC::getAllEvents);
+            });
+            path("/grade", () -> {
+               get(gradeFC::getAllGradeFormats);
             });
         });
         
