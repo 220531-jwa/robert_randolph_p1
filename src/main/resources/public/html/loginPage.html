@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+</head>
+<body>
+
+    <div class="container-fluid">
+        <div class="row vh-100 justify-content-center align-items-center">
+            <div class="col-md-5">
+                <form>
+                    <p>Please login to your account</p>
+
+                    <div id="error" style="color: red"></div>
+            
+                    <!-- Username Input -->
+                    <div class="form-outline mb-4">
+                        <lable class="form-lable" for="inputUsername" >UserName</lable>
+                        <input id="inputUsername" class="form-control" type="text">
+                    </div>
+            
+                    <!-- Password Input -->
+                    <div class="form-outline mb-4">
+                        <lable class="form-lable" for="inputPassword" >Password</lable>
+                        <input id="inputPassword" class="form-control" type="password">
+                    </div>
+            
+                     <!-- Sign In Button -->
+                     <div class="form-outline mb-4">
+                        <button class="btn btn-primary w-100" type="button" onclick="signIn()">Sign In</button>
+                     </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="../scripts/login.js"></script>
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+</body>
+</html>
