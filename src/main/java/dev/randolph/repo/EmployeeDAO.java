@@ -62,7 +62,7 @@ public class EmployeeDAO {
      * @throws SQLException The classic.
      */
     private Employee createEmployee(ResultSet rs) throws SQLException {
-        log.debug("Create Employee Object");
+        log.debug("Creating Employee Object");
         Employee emp = new Employee(
                 rs.getString("username"),
                 rs.getString("password_cred"),

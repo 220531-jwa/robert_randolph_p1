@@ -35,7 +35,7 @@ public class EmployeeController {
         if (result.getFirst() != null) {
             // Login successful
             log.info("Login was successful");
-            c.json(emp);
+            c.json(result.getFirst());
         }
         
         c.status(result.getSecond());

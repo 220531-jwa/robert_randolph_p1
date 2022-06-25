@@ -18,7 +18,6 @@ public class Driver {
         // Init server
         Javalin app = Javalin.create(config -> {
             config.addStaticFiles("/public", Location.CLASSPATH);       // Needed so html pages find scripts
-            config.addStaticFiles("/public/html", Location.CLASSPATH);  // Needed so url doesn't need /html
         });
         
         // Creating controllers

@@ -73,7 +73,7 @@ public class EmployeeService {
      * @return The employee if they exist, and null otherwise. Status depends on success/error
      */
     public Pair<Employee, Integer> getEmployeeByUsername(String username, String token) {
-        log.debug("Recieved username | password: " + username + " | " + token);
+        log.debug("Recieved username: " + username + " token: " + token);
         // Validating input
         if (username == null || token == null || username.isBlank() || token.isBlank()) {
             log.error("username and/or token input is/are invalid");
@@ -86,9 +86,9 @@ public class EmployeeService {
             return new Pair<>(null, 401);
         }
         
-        // Checking if user is authorized to requested employee information
+        // Checking if user is authorized to request employee information
         String requesterUsername = ActiveEmployeeSessions.getActiveEmployeeUsername(token);
-        if (requesterUsername != username) {
+        if (!requesterUsername.equals(username)) {
             log.error("User isn't authorized to know about given employee.");
             return new Pair<>(null, 403);
         }

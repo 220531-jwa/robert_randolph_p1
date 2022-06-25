@@ -59,6 +59,12 @@ public class ActiveEmployeeSessions {
         return true;
     }
     
+    /**
+     * Retrieves the username of the given token.
+     * If the token isn't associated with an active session returns null.
+     * @param token The token associated with the username for an active session.
+     * @return The token username if found, and null otherwise.
+     */
     public static String getActiveEmployeeUsername(String token) {
         log.debug("Getting employee username associated with token: " + token);
         // Checking if employee is active

@@ -26,7 +26,8 @@ public class TokenGenerator {
         do {
             token = "" + Math.abs(rand.nextInt()) + Math.abs(rand.nextInt());
         } while (usedTokens.contains(token));
-            
+        
+        log.debug("Generated token: " + token);
         return token;
     }
     
