@@ -13,7 +13,6 @@ async function signIn() {
         password: document.getElementById("inputPassword").value
     };
     const credentialsJson = JSON.stringify(credentials);
-    console.log("login button clicked");
 
     // Sending request
     let response = await fetch(url, {
@@ -25,10 +24,9 @@ async function signIn() {
     });
     
     // Processing response
-    console.log("processing response");
     if (response.status === 200) {
-        let data = await response.json();
-        sessionStorage.setItem("user", JSON.stringify(data));
+        let userData = await response.json();
+        sessionStorage.userData = JSON.stringify(userData);
         window.location = "../html/homePage.html";
     }
     else {

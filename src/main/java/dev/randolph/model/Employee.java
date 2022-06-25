@@ -3,8 +3,7 @@ package dev.randolph.model;
 import dev.randolph.model.enums.EmployeeType;
 
 public class Employee {
-    
-    private int id;
+
     private String username;
     private String password;
     private String firstName;
@@ -12,14 +11,13 @@ public class Employee {
     private EmployeeType type;
     private double reimFunds;
     private double funds;
-    private String token;   // For when employee is logged in
-    
-    public Employee() {}
 
-    public Employee(int id, String username, String password, String firstName, String lastName, EmployeeType type,
-            double reimFunds, double funds, String token) {
+    public Employee() {
+    }
+
+    public Employee(String username, String password, String firstName, String lastName, EmployeeType type,
+            double reimFunds, double funds) {
         super();
-        this.id = id;
         this.username = username;
         this.password = password;
         this.firstName = firstName;
@@ -27,15 +25,6 @@ public class Employee {
         this.type = type;
         this.reimFunds = reimFunds;
         this.funds = funds;
-        this.token = token;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getUsername() {
@@ -94,18 +83,9 @@ public class Employee {
         this.funds = funds;
     }
 
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
     @Override
     public String toString() {
-        return "Employee [id=" + id + ", username=" + username + ", password=" + password + ", firstName=" + firstName
-                + ", lastName=" + lastName + ", type=" + type + ", reimFunds=" + reimFunds + ", funds=" + funds
-                + ", token=" + token + "]";
+        return "Employee [username=" + username + ", password=" + password + ", firstName=" + firstName + ", lastName="
+                + lastName + ", type=" + type + ", reimFunds=" + reimFunds + ", funds=" + funds + ", token=" + "]";
     };
 }

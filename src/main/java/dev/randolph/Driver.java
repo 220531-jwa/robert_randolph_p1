@@ -1,6 +1,9 @@
 package dev.randolph;
 
-import static io.javalin.apibuilder.ApiBuilder.*;
+import static io.javalin.apibuilder.ApiBuilder.get;
+import static io.javalin.apibuilder.ApiBuilder.patch;
+import static io.javalin.apibuilder.ApiBuilder.path;
+import static io.javalin.apibuilder.ApiBuilder.post;
 
 import dev.randolph.controller.EmployeeController;
 import dev.randolph.controller.EventController;
@@ -10,7 +13,7 @@ import io.javalin.Javalin;
 import io.javalin.http.staticfiles.Location;
 
 public class Driver {
-
+    
     public static void main(String[] args) {
         // Init server
         Javalin app = Javalin.create(config -> {
@@ -36,7 +39,8 @@ public class Driver {
                 // No clue
             });
             path("/employee", () -> {
-                get(employeeC::getEmployeeById);
+                get(employeeC::getEmployeeByUsername);
+                patch(employeeC::updateEmployeeFundsById);
             });
             path("/request", () -> {
                 post(requestC::createNewRequest);
