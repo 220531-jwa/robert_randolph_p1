@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import dev.randolph.model.Employee;
 import dev.randolph.repo.EmployeeDAO;
 import dev.randolph.util.ActiveEmployeeSessions;
+import kotlin.Pair;
 
 public class EmployeeService {
     
@@ -22,31 +23,29 @@ public class EmployeeService {
      * If the passed credentials were invalid or the employee doesn't exist will return null.
      * @param username The username of the employee.
      * @param password The password of the employee.
-     * @return The employee if successful, and null otherwise.
+     * @return The employee if successful, and null otherwise. Status depends on success/error
      */
-    public Employee loginWithCredentials(String username, String password) {
+    public Pair<Employee, Integer> loginWithCredentials(String username, String password) {
         log.debug("Recieved credentials: " + username + " | " + password);
         // Validating input
         if (username == null || password == null || username.isBlank() || password.isBlank()) {
             log.error("username and/or password input(s) is/are invalid.");
-            return null;
+            return new Pair<>(null, 404);
         }
         
         // Getting employee
-        Employee emp = getEmployeeByUsername(username);
+        Employee emp = empDAO.getEmployeeByUsername(username);
         
         // Checking if employee exists
         if (emp == null) {
-            // Employee doesn't exist
             log.error("Employee does not exist.");
-            return null;
+            return new Pair<>(null, 404);
         }
         
         // Checking if employee credentials were valid
         if (!emp.getPassword().equals(password)) {
-            // Employee credentials didn't match
             log.error("Credentials don't match.");
-            return null;
+            return new Pair<>(null, 401);
         }
         
         // Credentials were valid
@@ -55,35 +54,55 @@ public class EmployeeService {
         
         // Checking if token is null
         if (token == null || token.isBlank()) {
-            // Error generating token
             log.error("Token failed to generate.");
-            emp = null;
+            return new Pair<>(null, 500);
         }
         else {
             // Token successfully generated
             // Modifying data to return back to client
             emp.setPassword(token); // Placing token where password is
-            log.info("Login session successful.");
         }
         
-        return emp;
+        return new Pair<>(emp, 200);
     }
     
     /**
      * Retrieves the employee with the given username from the database.
-     * @param username The username of the employee.
-     * @return The employee if they exist, and null otherwise.
+     * @param username The target username of the employee to get.
+     * @param token The source token of the active user.
+     * @return The employee if they exist, and null otherwise. Status depends on success/error
      */
-    public Employee getEmployeeByUsername(String username) {
-        log.debug("Recieved username: " + username);
+    public Pair<Employee, Integer> getEmployeeByUsername(String username, String token) {
+        log.debug("Recieved username | password: " + username + " | " + token);
         // Validating input
-        if (username == null || username.isBlank()) {
-            log.error("username input is invalid");
-            return null;
+        if (username == null || token == null || username.isBlank() || token.isBlank()) {
+            log.error("username and/or token input is/are invalid");
+            return new Pair<>(null, 404);
         }
         
-        // Getting employee
-        return empDAO.getEmployeeByUsername(username);
+        // Checking if user is in active session
+        if (!ActiveEmployeeSessions.isActiveEmployee(token)) {
+            log.error("User isn't in active session");
+            return new Pair<>(null, 401);
+        }
+        
+        // Checking if user is authorized to requested employee information
+        String requesterUsername = ActiveEmployeeSessions.getActiveEmployeeUsername(token);
+        if (requesterUsername != username) {
+            log.error("User isn't authorized to know about given employee.");
+            return new Pair<>(null, 403);
+        }
+        
+        // Checking if target employee exists
+        Employee emp = empDAO.getEmployeeByUsername(username);
+        int status = 200;
+        if (emp == null) {
+            log.error("Target Employee doesn't exist");
+            status = 404;
+        }
+        
+        // Getting employee -> 404 used when employee is null
+        return new Pair<>(emp, status);
     }
     
     /*

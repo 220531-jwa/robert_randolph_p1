@@ -43,7 +43,6 @@ public class EmployeeDAO {
                 // Found employee
                 emp = createEmployee(rs);
             }
-            
         } catch (SQLException e) {
             log.error("Failed to execute query " + sql);
             e.printStackTrace();
@@ -63,6 +62,7 @@ public class EmployeeDAO {
      * @throws SQLException The classic.
      */
     private Employee createEmployee(ResultSet rs) throws SQLException {
+        log.debug("Create Employee Object");
         Employee emp = new Employee(
                 rs.getString("username"),
                 rs.getString("password_cred"),

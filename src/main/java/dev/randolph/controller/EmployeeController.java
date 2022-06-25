@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import dev.randolph.model.Employee;
 import dev.randolph.service.EmployeeService;
 import io.javalin.http.Context;
+import kotlin.Pair;
 
 public class EmployeeController {
     
@@ -18,9 +19,9 @@ public class EmployeeController {
     
     /**
      * Handles request to login from the user.
-     * Takes username and password from body.
+     * Takes source username and password from body.
      * If login was successful password is replaced by a temporary token (handled in service)
-     * @return 200 with employee information if login was successful, and 401 otherwise.
+     * @return 200 with employee information if login was successful, and 400 series otherwise.
      */
     public void loginWithCredentials(Context c) {
         log.debug("HTTP request recieved at endpoint /login");
@@ -28,18 +29,16 @@ public class EmployeeController {
         Employee emp = c.bodyAsClass(Employee.class);
         
         // Getting employee from database
-        emp = es.loginWithCredentials(emp.getUsername(), emp.getPassword());
+        Pair<Employee, Integer> result = es.loginWithCredentials(emp.getUsername(), emp.getPassword());
         
         // Checking if username and password were correct
-        if (emp != null) {
+        if (result.getFirst() != null) {
             // Login successful
-            c.status(200);
-            c.json(emp);      // Sending back employee information
+            log.info("Login was successful");
+            c.json(emp);
         }
-        else {
-            // Login failed
-            c.status(401);
-        }
+        
+        c.status(result.getSecond());
     }
     
     /*
@@ -48,27 +47,26 @@ public class EmployeeController {
     
     /**
      * Retrieves employee information with the given id
-     * Takes Employee id as query
-     * TODO: This may not be necessary if login works as expected
-     * @return 200 with employee information is found, and 404 otherwise.
+     * Takes target employee username as query
+     * Takes source token header
+     * @return 200 with employee information is found, otherwise a 400 series error otherwise
      */
     public void getEmployeeByUsername(Context c) {
+        log.debug("HTTP request recieved at endpoint /employee");
         // Getting input
         String username = c.queryParam("username");
+        String token = c.header("Token");
         
         // Getting Employee
-        Employee e = es.getEmployeeByUsername(username);
+        Pair<Employee, Integer> result = es.getEmployeeByUsername(username, token);
         
-        // Validating output
-        if (e != null) {
-            // Successfully got employee
-            c.status(200);
-            c.json(e);
+        // Checking if employee information was gathered
+        if (result.getFirst() != null) {
+            log.info("Successfully got employee");
+            c.json(result.getFirst());
         }
-        else {
-            // Failed to get employee
-            c.status(404);
-        }
+        
+        c.status(result.getSecond());
     }
     
     /**

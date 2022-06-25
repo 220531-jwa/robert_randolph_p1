@@ -24,6 +24,13 @@ public class ActiveEmployeeSessions {
         log.debug("Creating active login session for username: " + username);
         // Generating token and activating user.
         String token = tg.generateToken();
+        
+        // Checking if token was successfully created
+        if (token == null || token.isBlank()) {
+            log.error("Failed to create active session: Token wasn't generated");
+            return null;
+        }
+        
         activeEmployees.put(token, username);
         
         return token;
@@ -45,10 +52,23 @@ public class ActiveEmployeeSessions {
             return false;
         }
         
+        // Removing active session
         activeEmployees.remove(token);
         tg.removeUsedToken(token);
         
         return true;
+    }
+    
+    public static String getActiveEmployeeUsername(String token) {
+        log.debug("Getting employee username associated with token: " + token);
+        // Checking if employee is active
+        if (!isActiveEmployee(token)) {
+            // isn't active - get get username
+            log.error("Token isn't associated with an active session.");
+            return null;
+        }
+        
+        return activeEmployees.get(token);
     }
     
     /**
