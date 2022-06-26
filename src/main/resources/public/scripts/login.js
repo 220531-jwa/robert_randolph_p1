@@ -27,7 +27,7 @@ async function signIn() {
     if (response.status === 200) {
         let userData = await response.json();
         sessionStorage.userData = JSON.stringify(userData);
-        window.location = "../html/homePage.html";
+        location.href = "../html/homePage.html";
     }
     else {
         document.getElementById("error").innerHTML = "Invalid Username or Password";

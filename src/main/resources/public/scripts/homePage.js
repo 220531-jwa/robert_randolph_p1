@@ -7,12 +7,17 @@ initializePage();
 
 function initializePage() {
     // Getting user data
-    const userData = getEmployeeData();
+    getEmployeeData();
+    let userData = getSessionUserData();
 
     // Updating page with user information
-    document.getElementById("welcome").innerHTML = `Welcome: ${userData.firstName}`;
+    document.getElementById("welcome").innerHTML = `Welcome: ${userData.firstName} ${userData.lastName}`;
     document.getElementById("reimFunds").innerHTML = `$${userData.reimFunds}`;
     document.getElementById("funds").innerHTML = `$${userData.funds}`;
+
+    if (userData.type !== 'MANAGER') {
+        document.getElementById("btnManage").hidden = true;
+    }
 
     // Populating table
     yourRequests();
@@ -24,10 +29,13 @@ function initializePage() {
 
 async function getEmployeeData() {
     // Init
-    let url = "http://localhost:8080/employee";
+    let url = "http://localhost:8080/employee?username=";
 
     // Getting userdata
     const userData = getSessionUserData();
+
+    // Updating url
+    url += userData.username;
 
     // Sending request for employee information
     let response = await fetch(url, {
@@ -36,14 +44,13 @@ async function getEmployeeData() {
             'Content-Type': 'application/json',
             'Token': userData.password
         }
-    })
+    });
 
     // Processing response
     if (response.status === 200) {
         // Getting up-to-date user information
-        let data = await response.json;
+        let data = await response.json();
         sessionStorage.userData = JSON.stringify(data);
-        return data;
     }
     else {
         logout();
@@ -131,7 +138,8 @@ function getSessionUserData() {
         logout();
     }
 
-    return JSON.parse(userData);
+    const userDataJson = JSON.parse(userData);
+    return userDataJson;
 }
 
 /**
@@ -140,5 +148,5 @@ function getSessionUserData() {
  */
 function logout() {
     sessionStorage.clear();
-    window.location = "../html/homePage.html";
+    location.href = "../html/loginPage.html";
 }
