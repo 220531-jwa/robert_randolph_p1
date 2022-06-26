@@ -1,38 +1,144 @@
-// Running init
+// Run when page loads
 initializePage();
 
+/*
+ * === Initialize ===
+ */
+
 function initializePage() {
-    const user = sessionStorage.user;
-    const userJson = JSON.parse(user);
-    document.getElementById("output").innerHTML = `<h1>Welcome ${userJson.username}<br></h1>`;
+    // Getting user data
+    const userData = getEmployeeData();
+
+    // Updating page with user information
+    document.getElementById("welcome").innerHTML = `Welcome: ${userData.firstName}`;
+    document.getElementById("reimFunds").innerHTML = `$${userData.reimFunds}`;
+    document.getElementById("funds").innerHTML = `$${userData.funds}`;
+
+    // Populating table
+    yourRequests();
 }
 
-async function getEmployee() {
+/*
+ * === Fetch calls ===
+ */
+
+async function getEmployeeData() {
     // Init
-    const username = document.getElementById("inputUsername").value
-    const url = "http://localhost:8080/employee?username=" + username;
+    let url = "http://localhost:8080/employee";
 
     // Getting userdata
-    const userData = sessionStorage.userData;
-    const userDataJson = JSON.parse(userData);
+    const userData = getSessionUserData();
 
     // Sending request for employee information
     let response = await fetch(url, {
-        method: "GET",
+        method: 'GET',
         headers: {
-            "Content-Type": "application/json",
-            "Token": userDataJson.password
+            'Content-Type': 'application/json',
+            'Token': userData.password
         }
     })
 
     // Processing response
     if (response.status === 200) {
+        // Getting up-to-date user information
         let data = await response.json;
-        document.getElementById("output").innerHTML += "Got  data for: " + username + "<br>";
-        document.getElementById("output").innerHTML += JSON.stringify(data);
-        document.getElementById("output").innerHTML += "<br>";
+        sessionStorage.userData = JSON.stringify(data);
+        return data;
     }
     else {
-        document.getElementById("output").innerHTML += "Couldn't get user data for user: " + username + "<br>";
+        logout();
     }
+}
+
+async function getReimbursementRequests() {
+    // Init
+    let url = "http://localhost:8080/request";
+
+    // Getting userdata
+    const userData = getSessionUserData();
+
+    // Updating url if manager
+    if (userData.type === 'MANAGER') {
+        url += `/all`
+    }
+
+    // Adding filters
+    // url += ?status=notApproved (or something)
+
+    // Sending request
+    let response = await fetch(url, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Token': userData.password
+        }
+    });
+
+    // Processing response
+    if (response.status === 200) {
+        let data = await response.json;
+        return data;
+    }
+    else {
+        logout();
+    }
+}
+
+/*
+ * === Event Listeners ===
+ */
+
+function yourRequests() {
+    // Updating nav
+    document.getElementById('btnManage').classList.remove('btn-primary');
+    document.getElementById('btnRequests').classList.add('btn-primary');
+
+    // Updating table
+    document.getElementById('tableLabel').innerHTML = "Your Requests:";
+    document.getElementById('btnNewRequest').hidden = false;
+    // ...
+}
+
+function manageRequests() {
+    // Updating nav
+    document.getElementById('btnRequests').classList.remove('btn-primary');
+    document.getElementById('btnManage').classList.add('btn-primary');
+
+    // Updating table
+    document.getElementById('tableLabel').innerHTML = "Employee Requests:";
+    document.getElementById('btnNewRequest').hidden = true;
+    // ...
+}
+
+function newRequest() {
+    // move to new html page, a form to enter request information
+}
+
+function seeRequest(item) {
+    // Move to new html page, to see specific request details
+}
+
+/*
+ * === Utility ===
+ */
+
+function getSessionUserData() {
+    const userData = sessionStorage.userData;
+
+    // Checking if in active session
+    if (userData === undefined) {
+        // Not in active session
+        logout();
+    }
+
+    return JSON.parse(userData);
+}
+
+/**
+ * Removes active session data and logouts the user.
+ * Redirects the user to the login page.
+ */
+function logout() {
+    sessionStorage.clear();
+    window.location = "../html/homePage.html";
 }

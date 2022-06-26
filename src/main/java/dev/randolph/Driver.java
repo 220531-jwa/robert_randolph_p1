@@ -1,7 +1,6 @@
 package dev.randolph;
 
 import static io.javalin.apibuilder.ApiBuilder.get;
-import static io.javalin.apibuilder.ApiBuilder.patch;
 import static io.javalin.apibuilder.ApiBuilder.path;
 import static io.javalin.apibuilder.ApiBuilder.post;
 
@@ -39,7 +38,6 @@ public class Driver {
             });
             path("/employee", () -> {
                 get(employeeC::getEmployeeByUsername);
-                patch(employeeC::updateEmployeeFundsById);
             });
             path("/request", () -> {
                 post(requestC::createNewRequest);

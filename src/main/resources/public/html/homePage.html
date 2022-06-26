@@ -5,17 +5,84 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home Page</title>
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
 </head>
 <body>
-    YOU MADE IT!
-    <div>
-        <lable class="form-lable" for="inputUsername" >UserName</lable>
-        <input id="inputUsername" class="form-control" type="text">
-    </div>
-    <button type="button" onclick="getEmployee()">Get data</button>
 
-    <div id="output"></div>
+    <div class="container-fluid">
+        
+        <!-- Welcome & Status -->
+        <div class="row">
+            <div class="col">
+                <h2 id="welcome">Welcome: Wolf Flow</h2>
+            </div>
+            <div class="col">
+                <div class="col text-end">
+                    Reimbursement Avaliable: <b id="reimFunds">$0.00</b>
+                </div>
+                <div class="col text-end">
+                    Your Funds: <b id="funds">$0.00</b>
+                </div>
+            </div>
+        </div>
+        <!-- Nav Bar -->
+        <nav class="navbar navbar-expand-sm navbar-light bg-light">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <button id="btnRequests" class="btn btn-primary" type="button" onclick="yourRequests()">Your Requests</button>
+                </li>
+                <li class="nav-item">
+                    <button id="btnManage" class="btn" type="button" onclick="manageRequests()">Manage Requests</button>
+                </li>
+                <li class="nav-item">
+                    <button class="btn" type="button" onclick="logout()">Logout</button>
+                </li>
+            </ul>
+        </nav>
+        <!-- Request Table -->
+        <div class="row mt-5">
+            <!-- Above Table -->
+            <div class="row mb-3">
+                <div class="col align-self-center">
+                    <h4 id="tableLabel">Your Requests:</h4>
+                </div>
+                <div class="col text-end">
+                    <button id="btnNewRequest" class="btn btn-outline-primary" type="button" onclick="newRequest()">New Request</button>
+                </div>
+            </div>
+            <!-- Request Table -->
+            <table class="table table-striped">
+                <thread>
+                    <tr>
+                        <th scope="col">Event Type</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Cost</th>
+                    </tr>
+                </thread>
+                <tbody id="tableItems">
+                    <tr>
+                        <td><a href="#">Certificate</a></td>
+                        <td>Awaiting Approval</td>
+                        <td>$150</td>
+                    </tr>
+                    <tr>
+                        <td><a href="#">University</a></td>
+                        <td>Rejected</td>
+                        <td>$1500</td>
+                    </tr>
+                    <tr>
+                        <td><a href="#">Other</a></td>
+                        <td>Accepted</td>
+                        <td>$15</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
     <script src="../scripts/homePage.js"></script>
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
 </body>
 </html>

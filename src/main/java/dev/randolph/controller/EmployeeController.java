@@ -72,13 +72,4 @@ public class EmployeeController {
     /**
      * === POST / PATCH ===
      */
-    
-    /**
-     * Updates the employees available reimbursement funds, and current funds
-     * 
-     */
-    public void updateEmployeeFundsById(Context c) {
-        
-    }
-
 }
