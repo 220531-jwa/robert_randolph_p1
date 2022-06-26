@@ -27,4 +27,4 @@ target/
 .settings/
 .classpath
 .project
-*.properties
+connection.properties
