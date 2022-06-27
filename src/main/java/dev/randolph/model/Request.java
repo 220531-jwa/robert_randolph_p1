@@ -1,23 +1,24 @@
 package dev.randolph.model;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 import dev.randolph.model.enums.GradeFormatType;
+import dev.randolph.model.enums.RequestStatus;
 
 public class Request {
     
     private int id;
-    private int employeeId;
-    private int eventId;
-    private Status status;
+    private String employeeUsername;
+    private String eventType;
+    private RequestStatus status;
     private double cost;
     private double reimAmount;
     private String grade;
     private GradeFormatType gradeFormat;
     private String passCutoff;
     private String justification;
-    private LocalDateTime startDate;
-    private LocalDateTime submissionDate;
+    private Timestamp startDate;
+    private Timestamp submissionDate;
     private String eventLocation;
     private String eventDescription;
     private boolean isUrgent;
@@ -26,14 +27,14 @@ public class Request {
     
     public Request() {}
 
-    public Request(int id, int employeeId, int eventId, Status status, double cost, double reimAmount, String grade,
-            GradeFormatType gradeFormat, String passCutoff, String justification, LocalDateTime startDate,
-            LocalDateTime submissionDate, String eventLocation, String eventDescription, boolean isUrgent,
-            boolean exceedsFunds, String reason) {
+    public Request(int id, String employeeUsername, String eventType, RequestStatus status, double cost,
+            double reimAmount, String grade, GradeFormatType gradeFormat, String passCutoff, String justification,
+            Timestamp timestamp, Timestamp submissionDate, String eventLocation, String eventDescription,
+            boolean isUrgent, boolean exceedsFunds, String reason) {
         super();
         this.id = id;
-        this.employeeId = employeeId;
-        this.eventId = eventId;
+        this.employeeUsername = employeeUsername;
+        this.eventType = eventType;
         this.status = status;
         this.cost = cost;
         this.reimAmount = reimAmount;
@@ -41,7 +42,7 @@ public class Request {
         this.gradeFormat = gradeFormat;
         this.passCutoff = passCutoff;
         this.justification = justification;
-        this.startDate = startDate;
+        this.startDate = timestamp;
         this.submissionDate = submissionDate;
         this.eventLocation = eventLocation;
         this.eventDescription = eventDescription;
@@ -58,27 +59,27 @@ public class Request {
         this.id = id;
     }
 
-    public int getEmployeeId() {
-        return employeeId;
+    public String getEmployeeUsername() {
+        return employeeUsername;
     }
 
-    public void setEmployeeId(int employeeId) {
-        this.employeeId = employeeId;
+    public void setEmployeeUsername(String employeeUsername) {
+        this.employeeUsername = employeeUsername;
     }
 
-    public int getEventId() {
-        return eventId;
+    public String getEventType() {
+        return eventType;
     }
 
-    public void setEventId(int eventId) {
-        this.eventId = eventId;
+    public void setEventType(String eventType) {
+        this.eventType = eventType;
     }
 
-    public Status getStatus() {
+    public RequestStatus getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(RequestStatus status) {
         this.status = status;
     }
 
@@ -130,19 +131,19 @@ public class Request {
         this.justification = justification;
     }
 
-    public LocalDateTime getStartDate() {
+    public Timestamp getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDateTime startDate) {
+    public void setStartDate(Timestamp startDate) {
         this.startDate = startDate;
     }
 
-    public LocalDateTime getSubmissionDate() {
+    public Timestamp getSubmissionDate() {
         return submissionDate;
     }
 
-    public void setSubmissionDate(LocalDateTime submissionDate) {
+    public void setSubmissionDate(Timestamp submissionDate) {
         this.submissionDate = submissionDate;
     }
 
@@ -188,11 +189,11 @@ public class Request {
 
     @Override
     public String toString() {
-        return "Request [id=" + id + ", employeeId=" + employeeId + ", eventId=" + eventId + ", status=" + status
-                + ", cost=" + cost + ", reimAmount=" + reimAmount + ", grade=" + grade + ", gradeFormat=" + gradeFormat
-                + ", passCutoff=" + passCutoff + ", justification=" + justification + ", startDate=" + startDate
-                + ", submissionDate=" + submissionDate + ", eventLocation=" + eventLocation + ", eventDescription="
-                + eventDescription + ", isUrgent=" + isUrgent + ", exceedsFunds=" + exceedsFunds + ", reason=" + reason
-                + "]";
+        return "Request [id=" + id + ", employeeUsername=" + employeeUsername + ", eventType=" + eventType + ", status="
+                + status + ", cost=" + cost + ", reimAmount=" + reimAmount + ", grade=" + grade + ", gradeFormat="
+                + gradeFormat + ", passCutoff=" + passCutoff + ", justification=" + justification + ", startDate="
+                + startDate + ", submissionDate=" + submissionDate + ", eventLocation=" + eventLocation
+                + ", eventDescription=" + eventDescription + ", isUrgent=" + isUrgent + ", exceedsFunds=" + exceedsFunds
+                + ", reason=" + reason + "]";
     }
 }

@@ -41,7 +41,10 @@ public class Driver {
             });
             path("/request", () -> {
                 post(requestC::createNewRequest);
-                get(requestC::getAllEmployeeRequests);
+                get(requestC::getAllRequests);
+                path("/{username}", () -> {
+                    get(requestC::getAllEmployeeRequests);
+                });
             });
             path("/event", () ->{
                 get(eventC::getAllEvents);

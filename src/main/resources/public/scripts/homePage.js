@@ -2,25 +2,39 @@
 initializePage();
 
 /*
- * === Initialize ===
+ * === Updates ===
  */
 
 function initializePage() {
-    // Getting user data
-    getEmployeeData();
-    let userData = getSessionUserData();
+    // Updating employee information
+    updateEmployeeInformation();
+
+    // update employee requests table
+    updateRequestInformation();
+}
+
+async function updateEmployeeInformation() {
+    // Getting up to date employee information
+    let userData = await getEmployeeData();
+    console.log("got user data: ");
+    console.log(userData);
 
     // Updating page with user information
     document.getElementById("welcome").innerHTML = `Welcome: ${userData.firstName} ${userData.lastName}`;
     document.getElementById("reimFunds").innerHTML = `$${userData.reimFunds}`;
     document.getElementById("funds").innerHTML = `$${userData.funds}`;
 
-    if (userData.type !== 'MANAGER') {
-        document.getElementById("btnManage").hidden = true;
+    // Checking if employee is manager -> unlocks manage requests nav button
+    if (userData.type === 'MANAGER') {
+        document.getElementById("btnManage").hidden = false;
     }
+}
 
-    // Populating table
-    yourRequests();
+async function updateRequestInformation() {
+    // Getting up to date request information
+    let requestData = await getReimbursementRequests();
+    console.log("got request data: ");
+    console.log(requestData);
 }
 
 /*
@@ -50,27 +64,20 @@ async function getEmployeeData() {
     if (response.status === 200) {
         // Getting up-to-date user information
         let data = await response.json();
-        sessionStorage.userData = JSON.stringify(data);
+        return data;
     }
-    else {
+    else if (response.status === 401) {
         logout();
     }
 }
 
 async function getReimbursementRequests() {
     // Init
+    console.log(3);
     let url = "http://localhost:8080/request";
 
     // Getting userdata
     const userData = getSessionUserData();
-
-    // Updating url if manager
-    if (userData.type === 'MANAGER') {
-        url += `/all`
-    }
-
-    // Adding filters
-    // url += ?status=notApproved (or something)
 
     // Sending request
     let response = await fetch(url, {
@@ -83,10 +90,10 @@ async function getReimbursementRequests() {
 
     // Processing response
     if (response.status === 200) {
-        let data = await response.json;
+        let data = await response.json();
         return data;
     }
-    else {
+    else if (response.status === 401) {
         logout();
     }
 }
@@ -103,7 +110,7 @@ function yourRequests() {
     // Updating table
     document.getElementById('tableLabel').innerHTML = "Your Requests:";
     document.getElementById('btnNewRequest').hidden = false;
-    // ...
+    let data = getReimbursementRequests();
 }
 
 function manageRequests() {
@@ -148,5 +155,5 @@ function getSessionUserData() {
  */
 function logout() {
     sessionStorage.clear();
-    location.href = "../html/loginPage.html";
+    // location.href = "../html/loginPage.html";
 }

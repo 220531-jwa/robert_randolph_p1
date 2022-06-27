@@ -30,7 +30,7 @@ public class EmployeeService {
         // Validating input
         if (username == null || password == null || username.isBlank() || password.isBlank()) {
             log.error("username and/or password input(s) is/are invalid.");
-            return new Pair<>(null, 404);
+            return new Pair<>(null, 400);
         }
         
         // Getting employee
@@ -77,7 +77,7 @@ public class EmployeeService {
         // Validating input
         if (username == null || token == null || username.isBlank() || token.isBlank()) {
             log.error("username and/or token input is/are invalid");
-            return new Pair<>(null, 404);
+            return new Pair<>(null, 400);
         }
         
         // Checking if user is in active session

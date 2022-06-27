@@ -33,7 +33,7 @@
                     <button id="btnRequests" class="btn btn-primary" type="button" onclick="yourRequests()">Your Requests</button>
                 </li>
                 <li class="nav-item">
-                    <button id="btnManage" class="btn" type="button" onclick="manageRequests()">Manage Requests</button>
+                    <button id="btnManage" class="btn" type="button" onclick="manageRequests()" hidden>Manage Requests</button>
                 </li>
                 <li class="nav-item">
                     <button class="btn" type="button" onclick="logout()">Logout</button>
@@ -55,26 +55,54 @@
             <table class="table table-striped">
                 <thread>
                     <tr>
+                        <th class="ManagerCol" scope="col">Name</th>
                         <th scope="col">Event Type</th>
-                        <th scope="col">Status</th>
                         <th scope="col">Cost</th>
+                        <th scope="col">Reimbursement</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Urgent</th>
+                        <th scope="col">Grade</th>
+                        <th scope="col">Cutoff</th>
+                        <th scope="col">Justification</th>
+                        <th scope="col">Start Date</th>
                     </tr>
                 </thread>
                 <tbody id="tableItems">
                     <tr>
-                        <td><a href="#">Certificate</a></td>
-                        <td>Awaiting Approval</td>
-                        <td>$150</td>
+                        <td>Alice Apple</td>
+                        <td><a href="#">UNIVERSITY</a></td>
+                        <td>$500.00</td>
+                        <td>$250.00</td>
+                        <td>AWAITING_APPROVAL</td>
+                        <td></td>
+                        <td>B</td>
+                        <td>C</td>
+                        <td>My Reason</td>
+                        <td>NA</td>
                     </tr>
                     <tr>
-                        <td><a href="#">University</a></td>
-                        <td>Rejected</td>
-                        <td>$1500</td>
+                        <td>Bob Bacon</td>
+                        <td><a href="#">CERTIFICATION</a></td>
+                        <td>$120.50</td>
+                        <td>$60.00</td>
+                        <td>APPROVED</td>
+                        <td>YES</td>
+                        <td>P</td>
+                        <td>P</td>
+                        <td>NA</td>
+                        <td>NA</td>
                     </tr>
                     <tr>
-                        <td><a href="#">Other</a></td>
-                        <td>Accepted</td>
-                        <td>$15</td>
+                        <td>Carl Cake</td>
+                        <td><a href="#">OTHER</a></td>
+                        <td>$15.00</td>
+                        <td>$15.00</td>
+                        <td>CANCELLED</td>
+                        <td></td>
+                        <td>NA</td>
+                        <td>B</td>
+                        <td>My Reason</td>
+                        <td>NA</td>
                     </tr>
                 </tbody>
             </table>

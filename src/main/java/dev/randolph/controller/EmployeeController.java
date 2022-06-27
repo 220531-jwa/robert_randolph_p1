@@ -10,7 +10,7 @@ import kotlin.Pair;
 
 public class EmployeeController {
     
-    private EmployeeService es = new EmployeeService();
+    private EmployeeService empService = new EmployeeService();
     private static Logger log = LogManager.getLogger(EmployeeController.class);
     
     /*
@@ -29,7 +29,7 @@ public class EmployeeController {
         Employee emp = c.bodyAsClass(Employee.class);
         
         // Getting employee from database
-        Pair<Employee, Integer> result = es.loginWithCredentials(emp.getUsername(), emp.getPassword());
+        Pair<Employee, Integer> result = empService.loginWithCredentials(emp.getUsername(), emp.getPassword());
         
         // Checking if username and password were correct
         if (result.getFirst() != null) {
@@ -49,7 +49,7 @@ public class EmployeeController {
      * Retrieves employee information with the given id
      * Takes target employee username as query
      * Takes source token header
-     * @return 200 with employee information is found, otherwise a 400 series error otherwise
+     * @return 200 with employee information is found, 400 series error otherwise
      */
     public void getEmployeeByUsername(Context c) {
         log.debug("HTTP request recieved at endpoint /employee");
@@ -58,7 +58,7 @@ public class EmployeeController {
         String token = c.header("Token");
         
         // Getting Employee
-        Pair<Employee, Integer> result = es.getEmployeeByUsername(username, token);
+        Pair<Employee, Integer> result = empService.getEmployeeByUsername(username, token);
         
         // Checking if employee information was gathered
         if (result.getFirst() != null) {
