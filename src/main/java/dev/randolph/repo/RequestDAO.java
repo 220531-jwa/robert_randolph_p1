@@ -28,29 +28,12 @@ public class RequestDAO {
                 + " where username = employee_username";
         ArrayList<RequestDTO> requests = new ArrayList<>();
         
-        // Updating sql query filter
-        if (filter != null) {
-            StringBuilder builder = new StringBuilder(sql);
-            builder.append(" AND status in (");
-            for (int i = 0; i < filter.length; i++) {
-                if (i == 0) {
-                    builder.append("?");
-                }
-                else {
-                    builder.append(", ?");
-                }
-            }
-            builder.append(")");
-            sql = builder.toString();
-        }
+        sql = addFilters(sql, filter);
         
         // Attempting to execute query
         try (Connection conn = cu.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(sql);
-            if (filter != null) 
-                for (int i = 0; i < filter.length; i++) {
-                    ps.setString(i+1, filter[i].toString());
-                }
+            setFilters(ps, 1, filter);
             ResultSet rs = ps.executeQuery();
             
             while (rs.next()) {
@@ -65,25 +48,22 @@ public class RequestDAO {
         return requests;
     }
     
-    public List<RequestDTO> getAllEmployeeRequests(String username, Integer rid) {
-        log.debug("Recieved username: " + username + " rid: " + rid);
+    public List<RequestDTO> getAllEmployeeRequests(String username, RequestStatus[] filter) {
+        log.debug("Recieved username: " + username + " filter: " + filter);
         String sql = "select first_name, last_name, r.*"
                 + " from employees, requests r"
-                + " where username = ?";
+                + " where username = employee_username"
+                + " and username = ?";
         ArrayList<RequestDTO> requests = null;
         
-        // Checking if getting specific request
-        if (rid != null) {
-            sql += " and id = ?";
-        }
+        // Adding filters if any
+        sql = addFilters(sql, filter);
         
         // Attempting to execute query
         try (Connection conn = cu.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, username);
-            if(rid != null) {
-                ps.setInt(2, rid);
-            }
+            setFilters(ps, 2, filter);
             ResultSet rs = ps.executeQuery();
             
             if (rs.next() ) {
@@ -97,12 +77,77 @@ public class RequestDAO {
             log.error("Failed to execute query " + sql);
             e.printStackTrace();
         }
+        
+        return requests;
+    }
+    
+    public List<RequestDTO> getAllEmployeeRequestById(String username, Integer rid) {
+        log.debug("Recieved username: " + username + " rid: " + rid);
+        String sql = "select first_name, last_name, r.*"
+                + " from employees, requests r"
+                + " where username = employee_username"
+                + " and username = ? and id = ?";
+        ArrayList<RequestDTO> requests = null;
+        
+        // Attempting to execute query
+        try (Connection conn = cu.getConnection()) {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, username);
+            ps.setInt(2, rid);
+            ResultSet rs = ps.executeQuery();
+            
+            if (rs.next() ) {
+                // Found requests
+                requests = new ArrayList<>();
+                requests.add(createRequestDTO(rs));
+            }
+        } catch (SQLException e) {
+            log.error("Failed to execute query " + sql);
+            e.printStackTrace();
+        }
+        
         return requests;
     }
     
     /*
      * === UTILITY ===
      */
+    
+    private String addFilters(String sql, RequestStatus[] filter) {
+        // Checking if there are filters to add.
+        if (filter == null) {
+            // No filters to add
+            return sql;
+        }
+        log.debug("Adding filters to sql");
+        
+        StringBuilder builder = new StringBuilder(sql);
+        builder.append(" and status in (");
+        for (int i = 0; i < filter.length; i++) {
+            if (i == 0) {
+                builder.append("?");
+            }
+            else {
+                builder.append(", ?");
+            }
+        }
+        builder.append(")");
+        
+        return builder.toString();
+    }
+    
+    private void setFilters(PreparedStatement ps, int index, RequestStatus[] filter) throws SQLException {
+        // Checking if there are filters to set.
+        if (filter == null) {
+            // No filters to set
+            return;
+        }
+        log.debug("Adding filters to sql");
+        
+        for (int i = 0; i < filter.length; i++) {
+            ps.setString(i+index, filter[i].toString());
+        }
+    }
     
     private Request createRequest(ResultSet rs) throws SQLException {
         log.debug("Creating Request Object");

@@ -1,14 +1,15 @@
 package dev.randolph.model.enums;
 
 public enum RequestStatus {
-    AWAITING_APPROVAL,
-    PENDING_COMPLETION,
+    PENDING_REVIEW,
+    PENDING_GRADE,
+    PENDING_APPROVAL,
     APPROVED,
     REJECTED,
     CANCELLED;
     
     public static RequestStatus[] getPending() {
-        RequestStatus[] pending = {AWAITING_APPROVAL, PENDING_COMPLETION};
+        RequestStatus[] pending = {PENDING_REVIEW, PENDING_GRADE, PENDING_APPROVAL};
         return pending;
     }
     

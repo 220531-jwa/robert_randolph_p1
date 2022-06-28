@@ -1,4 +1,5 @@
 // Run when page loads
+var managerView = false;
 initializePage();
 
 /*
@@ -6,6 +7,12 @@ initializePage();
  */
 
 function initializePage() {
+    // Adding event listener to filter
+    let filter = document.getElementById('filter');
+    filter.addEventListener('change', () => {
+        updateRequestInformation();
+    });
+
     // Updating employee information
     updateEmployeeInformation();
 
@@ -16,8 +23,12 @@ function initializePage() {
 async function updateEmployeeInformation() {
     // Getting up to date employee information
     let userData = await getEmployeeData();
-    console.log("got user data: ");
-    console.log(userData);
+
+    // Checking if fetch was successful
+    if (userData === null) {
+        // Failed
+        return;
+    }
 
     // Updating page with user information
     document.getElementById("welcome").innerHTML = `Welcome: ${userData.firstName} ${userData.lastName}`;
@@ -31,10 +42,29 @@ async function updateEmployeeInformation() {
 }
 
 async function updateRequestInformation() {
+    // Clearing current table data
+    let tableItems = document.getElementById("tableItems");
+    tableItems.innerHTML = "";
+
+    // Displaying/Hidding managerView cols
+    let elements = document.getElementsByClassName('ManagerCol');
+    for (elem of elements) {
+        elem.hidden = !managerView;
+    }
+
     // Getting up to date request information
     let requestData = await getReimbursementRequests();
-    console.log("got request data: ");
-    console.log(requestData);
+
+    // Checking if fetch was succesful
+    if (requestData === null) {
+        // Failed
+        return;
+    }
+
+    // Populating table
+    for (req of requestData) {
+        tableItems.append(createTableRow(req));
+    }
 }
 
 /*
@@ -69,15 +99,26 @@ async function getEmployeeData() {
     else if (response.status === 401) {
         logout();
     }
+    else {
+        return null;
+    }
 }
 
 async function getReimbursementRequests() {
     // Init
-    console.log(3);
     let url = "http://localhost:8080/request";
 
     // Getting userdata
     const userData = getSessionUserData();
+
+    // Updating url
+    if (!managerView) {
+        // Not a manager
+        url += `/${userData.username}`;
+    }
+    let filter = document.getElementById('filter');
+    let value = filter.options[filter.selectedIndex].value;
+    url += `?statusFilter=${value}`;
 
     // Sending request
     let response = await fetch(url, {
@@ -96,6 +137,9 @@ async function getReimbursementRequests() {
     else if (response.status === 401) {
         logout();
     }
+    else {
+        return null;
+    }
 }
 
 /*
@@ -103,6 +147,9 @@ async function getReimbursementRequests() {
  */
 
 function yourRequests() {
+    // Updating flags
+    managerView = false;
+    
     // Updating nav
     document.getElementById('btnManage').classList.remove('btn-primary');
     document.getElementById('btnRequests').classList.add('btn-primary');
@@ -110,10 +157,14 @@ function yourRequests() {
     // Updating table
     document.getElementById('tableLabel').innerHTML = "Your Requests:";
     document.getElementById('btnNewRequest').hidden = false;
-    let data = getReimbursementRequests();
+    
+    updateRequestInformation();
 }
 
 function manageRequests() {
+    // Updating flags
+    managerView = true;
+    
     // Updating nav
     document.getElementById('btnRequests').classList.remove('btn-primary');
     document.getElementById('btnManage').classList.add('btn-primary');
@@ -121,7 +172,8 @@ function manageRequests() {
     // Updating table
     document.getElementById('tableLabel').innerHTML = "Employee Requests:";
     document.getElementById('btnNewRequest').hidden = true;
-    // ...
+
+    updateRequestInformation();
 }
 
 function newRequest() {
@@ -130,11 +182,65 @@ function newRequest() {
 
 function seeRequest(item) {
     // Move to new html page, to see specific request details
+    console.log('Clicked request item: ' + item);
 }
 
 /*
  * === Utility ===
  */
+
+function createTableRow(requestData) {
+    // Seperating data
+    let firstName = requestData.firstName;
+    let lastName = requestData.lastName;
+    let request = requestData.request;
+    let id = request.id;
+    let values;
+
+    if (managerView) {
+        values = [`${firstName} ${lastName}`, request.eventType, `$${request.cost.toFixed(2)}`,
+            `$${request.reimAmount.toFixed(2)}`, request.status, request.urgent, request.grade,
+            request.passCutoff, request.justification, request.startDate];
+    }
+    else {
+        values = [request.eventType, `$${request.cost.toFixed(2)}`,
+            `$${request.reimAmount.toFixed(2)}`, request.status, request.grade,
+            request.passCutoff, request.startDate];
+    }
+
+    // Creating row
+    let tr = document.createElement('tr');
+    tr.id = `request_${id}`
+
+    // Adding link
+    let i;
+    if (managerView) {
+        i = 0;
+    }
+    else {
+        i = 1;
+    }
+
+    for (val of values) {
+        let td = document.createElement('td');
+
+        if (i == 1) {
+            let a = document.createElement('a');
+            a.setAttribute('href', '#');
+            a.addEventListener('click', () => seeRequest(id));
+            a.innerHTML = val;
+            td.append(a);
+        }
+        else {
+            td.innerHTML = val;
+        }
+        
+        tr.append(td);
+        i++;
+    }
+
+    return tr;
+}
 
 function getSessionUserData() {
     const userData = sessionStorage.userData;

@@ -31,8 +31,8 @@ public class RequestController {
     
     /**
      * Retrieves all reimbursement requests in the database.
-     * Takes status filter as query.
-     * Takes source from header.
+     * Takes status filter from query.
+     * Takes source token from header.
      * @return 200 with request information, 400 series error otherwise.
      */
     public void getAllRequests(Context c) {
@@ -55,13 +55,22 @@ public class RequestController {
         c.status(result.getSecond());
     }
     
-    // Get every request of an employee
+    /**
+     * Retrieves all reimbursement requests of the given employee username.
+     * Able to get specific request using an id.
+     * Takes username from path.
+     * Takes request id from query.
+     * Takes status filter from query.
+     * Takes source token from header.
+     * @return 200 with request information, 400 series error otherwise.
+     */
     public void getAllEmployeeRequests(Context c) {
         log.debug("Http request recieved at endpoint /request/{username}");
         // Getting input
-        String username = c.queryParam("username");
+        String username = c.pathParam("username");
         Validator<Integer> vrid = c.queryParamAsClass("rid", Integer.class);
         Integer rid = null;
+        String statusFilter = c.queryParam("statusFilter");
         String token = c.header("Token");
         
         // Checking if request id was provided
@@ -70,7 +79,7 @@ public class RequestController {
         }
         
         // Getting requests
-        Pair<List<RequestDTO>, Integer> result = reqService.getAllEmployeeRequests(username, rid, token);
+        Pair<List<RequestDTO>, Integer> result = reqService.getAllEmployeeRequests(username, rid, statusFilter, token);
         
         // Checking if requests were gathered
         if (result.getFirst() != null) {
