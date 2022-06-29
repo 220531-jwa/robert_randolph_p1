@@ -5,8 +5,6 @@ import static io.javalin.apibuilder.ApiBuilder.path;
 import static io.javalin.apibuilder.ApiBuilder.post;
 
 import dev.randolph.controller.EmployeeController;
-import dev.randolph.controller.EventController;
-import dev.randolph.controller.GradeFormatController;
 import dev.randolph.controller.RequestController;
 import io.javalin.Javalin;
 import io.javalin.http.staticfiles.Location;
@@ -22,8 +20,6 @@ public class Driver {
         // Creating controllers
         EmployeeController employeeC = new EmployeeController();
         RequestController requestC = new RequestController();
-        EventController eventC = new EventController();
-        GradeFormatController gradeFC = new GradeFormatController();
         
         // Starting server
         app.start(8080);
@@ -34,23 +30,17 @@ public class Driver {
                 post(employeeC::loginWithCredentials);
             });
             path("logout", () -> {
-                // No clue
+                post(employeeC::logout);
             });
             path("/employee", () -> {
                 get(employeeC::getEmployeeByUsername);
             });
             path("/request", () -> {
-                post(requestC::createNewRequest);
+//                post(requestC::createNewRequest);
                 get(requestC::getAllRequests);
                 path("/{username}", () -> {
                     get(requestC::getAllEmployeeRequests);
                 });
-            });
-            path("/event", () ->{
-                get(eventC::getAllEvents);
-            });
-            path("/grade", () -> {
-               get(gradeFC::getAllGradeFormats);
             });
         });
         

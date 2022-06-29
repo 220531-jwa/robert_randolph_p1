@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Request</title>
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container bg-light">
+        <h1 class="mb-4 bg-dark">#</h1>
+        <h1 id="title" class="mb-4">Your Request:</h1>
+        <form id="form">
+            <hr>
+            <p><b>Employee Information</b></p>
+            <div class="form-group row mb-4">
+                <div class="col readOnly manager">
+                    <lable style="display: block" for="firstName">First Name:</lable>
+                    <input id="firstName" type="text" placeholder="Wolf" disabled>
+                </div>
+                <div class="col readOnly manager">
+                    <lable style="display: block" for="lastName">Last Name:</lable>
+                    <input id="lastName" type="text" placeholder="Flow" disabled>
+                </div>
+                <div class="col">
+                    <lable style="display: block" for="reimAmountAval">Reimbursement Avaliable:</lable>
+                    <input id="reimAmountAval" type="text" placeholder="$100.00" disabled>
+                </div>
+            </div>
+            <hr>
+            <p><b>Event Details</b></p>
+            <div class="form-group row mb-4">
+                <div class="form-group row mb-4 update">
+                    <div class="col">
+                        <label style="display: block" for="inputStatus">Status:</label>
+                        <select id="inputStatus">
+                            <option value="Value1">Value1</option>
+                            <option value="Value12">Value12</option>
+                            <option value="Value13">Value13</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col">
+                    <label style="display: block" for="inputEventType">Event Type:</label>
+                    <select id="inputEventType" class="input">
+                        <option value="Value1">Value1</option>
+                        <option value="Value12">Value12</option>
+                        <option value="Value13">Value13</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <lable style="display: block" for="inputCost">Cost:</lable>
+                    <input id="inputCost" class="input" type="number" min="0" max="9999.99" step="any" placeholder="$0.00">
+                </div>
+                <div class="col update">
+                    <lable style="display: block" for="inputReimAmount">Reimbursement Amount:</lable>
+                    <input id="inputReimAmount" class="update manager" type="number" min="0" max="9999.99" step="any" placeholder="$0.00">
+                </div>
+            </div>
+            <div class="form-group row mb-4">
+                <div class="col">
+                    <label style="display: block" for="inputGradeFormat">Grade Format:</label>
+                    <select id="inputGradeFormat" class="input">
+                        <option value="Value1">Value1</option>
+                        <option value="Value12">Value12</option>
+                        <option value="Value13">Value13</option>
+                    </select>
+                </div>
+                <div class="col update">
+                    <label style="display: block" for="inputGrade">Grade:</label>
+                    <input class="update employee" id="inputGrade" type="text">
+                </div>
+                <div class="col">
+                    <label style="display: block" for="inputCutoff">Cutoff:</label>
+                    <input id="inputCutoff" class="input" type="text">
+                </div>
+            </div>
+            <div class="form-group mb-4">
+                <label style="display: block" for="inputDescription">Event Description</label>
+                <textarea id="inputDescription" class="form-control input" rows="3"></textarea>
+            </div>
+            <hr>
+            <p><b>Event Location & Time</b></p>
+            <div class="form-group row mb-4">
+                <div class="col">
+                    <label style="display: block" for="inputLocation">Location</label>
+                    <input id="inputLocation" class="input" type="text">
+                </div>
+                <div class="col">
+                    <label style="display: block" for="inputStartDate">Start Date</label>
+                    <input id="inputStartDate" class="input" type="date">
+                </div>
+                <div class="col">
+                    <label style="display: block" for="inputStartTime">Start Time</label>
+                    <input id="inputStartTime" class="input" type="time">
+                </div>
+            </div>
+            <div class="form-group row mb-4 readOnly">
+                <div class="col"></div>
+                <div class="col">
+                    <label style="display: block" for="submissionDate">Submission Date</label>
+                    <input id="submissionDate" type="date" disabled>
+                </div>
+                <div class="col">
+                    <label style="display: block" for="submissionTime">Submission Time</label>
+                    <input id="submissionTime" type="time" disabled>
+                </div>
+            </div>
+            <hr>
+            <p><b>For Manager Review</b></p>
+            <div class="form-group row mb-4 readOnly">
+                <div class="col">
+                    <label class="form-label-check" style="display: block" for="urgentFlag">Urgent:</label>
+                    <input class="form-check-input" id="urgentFlag" class="form-check" type="checkbox" disabled>
+                </div>
+                <div class="col">
+                    <label class="form-label-check" style="display: block" for="exceedsFundsFlag">Exceeds Funds:</label>
+                    <input class="form-check-input" id="exceedsFundsFlag" type="checkbox" disabled>
+                </div>
+            </div>
+            <div class="form-group mb-4">
+                <label style="display: block" for="inputJustification">Justification For Reimbursement</label>
+                <textarea id="inputJustification" class="form-control input" rows="3"></textarea>
+            </div>
+            <div class="form-group mb-4 update">
+                <label style="display: block" for="inputReason">Reason for Reimbursement Amount Change</label>
+                <textarea id="inputReason" class="form-control update manager" rows="3"></textarea>
+            </div>
+        </form>
+        <div class="row">
+            <div class="col">
+                <button class="btn btn-primary mb-4" type="button" onclick="back()">Back</button>
+            </div>
+            <div class="col text-end">
+                <button id="btnSubmit" class="btn btn-primary mb-4" type="button">Submit</button>
+            </div>
+        </div>
+        <h1 class="mb-4 bg-dark">#</h1>
+    </div>
+
+    <script src="../scripts/util.js"></script>
+    <script src="../scripts/requestPage.js"></script>
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+</body>
+</html>

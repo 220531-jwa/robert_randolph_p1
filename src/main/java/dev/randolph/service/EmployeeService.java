@@ -14,7 +14,7 @@ public class EmployeeService {
     private static Logger log = LogManager.getLogger(EmployeeService.class);
     
     /*
-     * === GET / READ ===
+     * === POST / CREATE ===
      */
     
     /**
@@ -66,6 +66,32 @@ public class EmployeeService {
         return new Pair<>(emp, 200);
     }
     
+
+    public int logout(String token) {
+        log.debug("Recieved token: " + token);
+        // Validating input
+        if (token == null || token.isBlank()) {
+            log.error("token input is invalid.");
+            return 400;
+        }
+        
+        // Removing active session of user
+        boolean result = ActiveEmployeeSessions.removeActiveEmployee(token);
+        
+        // Checking if token was associated with an active session.
+        if (!result) {
+            // Didn't find active session
+            return 404;
+        }
+        
+        // Success
+        return 200;
+    }
+    
+    /*
+     * === GET / READ ===
+     */
+    
     /**
      * Retrieves the employee with the given username from the database.
      * @param username The target username of the employee to get.
@@ -104,6 +130,7 @@ public class EmployeeService {
         // Getting employee -> 404 used when employee is null
         return new Pair<>(emp, status);
     }
+
     
     /*
      * === PUT / PATCH / UPDATE ===

@@ -7,7 +7,7 @@
  *  - Including various elements
  * Calls for employee and request updates
  */
- initializePage();
+initializePage();
 function initializePage() {
     // Init - global vars
     managerView = false;
@@ -98,37 +98,12 @@ async function updateRequestInformation() {
  *  - if not authorized, user is redirected to login page
  * @returns The employee data if successful, and null otherwise.
  */
-async function getEmployeeData() {
+function getEmployeeData() {
     // Init
-    let url = "http://localhost:8080/employee?username=";
-
-    // Getting userdata
     const userData = getSessionUserData();
+    const url = `http://localhost:8080/employee?username=${userData.username}`;
 
-    // Updating url
-    url += userData.username;
-
-    // Sending request for employee information
-    let response = await fetch(url, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Token': userData.password
-        }
-    });
-
-    // Processing response
-    if (response.status === 200) {
-        // Getting up-to-date user information
-        let data = await response.json();
-        return data;
-    }
-    else if (response.status === 401) {
-        logout();
-    }
-    else {
-        return null;
-    }
+    return fetchGetRequest(url);
 }
 
 /**
@@ -140,42 +115,24 @@ async function getEmployeeData() {
  *  - if not authorized, user is redirected to login page
  * @returns The request data if successful, and null otherwise.
  */
-async function getReimbursementRequests() {
+function getReimbursementRequests() {
     // Init
+    const userData = getSessionUserData();
     let url = "http://localhost:8080/request";
 
-    // Getting userdata
-    const userData = getSessionUserData();
-
     // Updating url
+    // Checking if getting all requests (Manager only)
     if (!managerView) {
-        // Not a manager
+        // Not a manager - Getting only specific employee requests
         url += `/${userData.username}`;
     }
+
+    // Adding filter query param
     let filter = document.getElementById('filter');
     let value = filter.options[filter.selectedIndex].value;
     url += `?statusFilter=${value}`;
 
-    // Sending request
-    let response = await fetch(url, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Token': userData.password
-        }
-    });
-
-    // Processing response
-    if (response.status === 200) {
-        let data = await response.json();
-        return data;
-    }
-    else if (response.status === 401) {
-        logout();
-    }
-    else {
-        return null;
-    }
+    return fetchGetRequest(url);
 }
 
 /*
@@ -225,15 +182,16 @@ function manageRequests() {
  */
 function newRequest() {
     // move to new html page, a form to enter request information
+    location.href = "../html/requestPage.html?id=0";
 }
 
 /**
  * Redirects the user to a new page to see all the details of the selected request.
- * @param {The id of the request to find} item 
+ * @param {The id of the request to find} rid 
  */
-function seeRequest(item) {
+function seeRequest(rid) {
     // Move to new html page, to see specific request details
-    console.log('Clicked request item: ' + item);
+    location.href = `../html/requestPage.html?id=${rid}&managerView=${managerView}`;
 }
 
 /*
@@ -299,30 +257,4 @@ function createTableRow(requestData) {
     }
 
     return tr;
-}
-
-/**
- * Gets the user data from the current session.
- * @returns The user data for the currently active session
- */
-function getSessionUserData() {
-    const userData = sessionStorage.userData;
-
-    // Checking if in active session
-    if (userData === undefined) {
-        // Not in active session
-        logout();
-    }
-
-    const userDataJson = JSON.parse(userData);
-    return userDataJson;
-}
-
-/**
- * Removes active session data and logouts the user.
- * Redirects the user to the login page.
- */
-function logout() {
-    sessionStorage.clear();
-    // location.href = "../html/loginPage.html";
 }

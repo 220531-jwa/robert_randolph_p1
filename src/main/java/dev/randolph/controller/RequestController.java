@@ -36,7 +36,7 @@ public class RequestController {
      * @return 200 with request information, 400 series error otherwise.
      */
     public void getAllRequests(Context c) {
-        log.debug("Http request recieved at endpoint /request");
+        log.debug("Http get request recieved at endpoint /request");
         // Getting input
         String statusFilter = c.queryParam("statusFilter");
         String token = c.header("Token");
@@ -45,8 +45,6 @@ public class RequestController {
         Pair<List<RequestDTO>, Integer> result = reqService.getAllRequests(statusFilter, token);
         
         // Checking if request information was gathered
-        System.out.println("finished");
-        System.out.println("is first: " + result.getFirst());
         if (result.getFirst() != null) {
             log.info("Succesfully got requests.");
             c.json(result.getFirst());
@@ -65,7 +63,7 @@ public class RequestController {
      * @return 200 with request information, 400 series error otherwise.
      */
     public void getAllEmployeeRequests(Context c) {
-        log.debug("Http request recieved at endpoint /request/{username}");
+        log.debug("Http get request recieved at endpoint /request/{username}");
         // Getting input
         String username = c.pathParam("username");
         Validator<Integer> vrid = c.queryParamAsClass("rid", Integer.class);

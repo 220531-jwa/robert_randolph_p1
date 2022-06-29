@@ -29,7 +29,7 @@ public class RequestService {
         // Validating input
         if (token == null || token.isBlank()) {
             log.error("token input is invalid");
-            return new Pair<>(null, 404);
+            return new Pair<>(null, 400);
         }
         
         // Checking if user is in active session
@@ -54,6 +54,13 @@ public class RequestService {
         
         return new Pair<>(requests, 200);
     }
+    
+    
+    
+    
+    
+    
+    
     
     public Pair<List<RequestDTO>, Integer> getAllEmployeeRequests(String username, Integer rid, String statusFilter, String token) {
         log.debug("Recieved username: " + username + " rid: " + rid + " statusFilter: " + statusFilter + " token: " + token);

@@ -3,7 +3,7 @@
  * If successful will create a login session
  * Otherwise will notify the user there is
  */
-async function signIn() {
+async function login() {
     // Init
     const url = "http://localhost:8080/login";
 
