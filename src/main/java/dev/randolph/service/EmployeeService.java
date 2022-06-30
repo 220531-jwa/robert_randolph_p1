@@ -66,7 +66,11 @@ public class EmployeeService {
         return new Pair<>(emp, 200);
     }
     
-
+    /**
+     * Attempts to log the user out.
+     * @param token The token of the active user session.
+     * @return 200 if successful, and 400 series otherwise.
+     */
     public int logout(String token) {
         log.debug("Recieved token: " + token);
         // Validating input

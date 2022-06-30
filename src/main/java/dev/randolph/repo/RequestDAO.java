@@ -21,6 +21,12 @@ public class RequestDAO {
     private ConnectionUtil cu = ConnectionUtil.getConnectionUtil();
     private static Logger log = LogManager.getLogger(RequestDAO.class);
     
+    /**
+     * Retrieves all the employee requests from the database.
+     * Can add filters to filter by status.
+     * @param filter The filters to filter by (Optional)
+     * @return The list of requests. Can be empty.
+     */
     public List<RequestDTO> getAllRequests(RequestStatus[] filter) {
         log.debug("Recieved filter: " + filter);
         String sql = "select first_name, last_name, r.*"
@@ -28,12 +34,12 @@ public class RequestDAO {
                 + " where username = employee_username";
         ArrayList<RequestDTO> requests = new ArrayList<>();
         
-        sql = addFilters(sql, filter);
+        sql = addStatusFilters(sql, filter);
         
         // Attempting to execute query
         try (Connection conn = cu.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(sql);
-            setFilters(ps, 1, filter);
+            setStatusFilters(ps, 1, filter);
             ResultSet rs = ps.executeQuery();
             
             while (rs.next()) {
@@ -48,22 +54,29 @@ public class RequestDAO {
         return requests;
     }
     
+    /**
+     * Retrieves all the requests of the given username.
+     * Can add filters for status
+     * @param username The username to find the requests of.
+     * @param filter The list of status filters. (Optional)
+     * @return A list of requests if successful, and null otherwise.
+     */
     public List<RequestDTO> getAllEmployeeRequests(String username, RequestStatus[] filter) {
         log.debug("Recieved username: " + username + " filter: " + filter);
-        String sql = "select first_name, last_name, r.*"
+        String sql = "select first_name, last_name, reimbursement_funds, r.*"
                 + " from employees, requests r"
                 + " where username = employee_username"
                 + " and username = ?";
         ArrayList<RequestDTO> requests = null;
         
         // Adding filters if any
-        sql = addFilters(sql, filter);
+        sql = addStatusFilters(sql, filter);
         
         // Attempting to execute query
         try (Connection conn = cu.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, username);
-            setFilters(ps, 2, filter);
+            setStatusFilters(ps, 2, filter);
             ResultSet rs = ps.executeQuery();
             
             if (rs.next() ) {
@@ -81,13 +94,19 @@ public class RequestDAO {
         return requests;
     }
     
-    public List<RequestDTO> getAllEmployeeRequestById(String username, Integer rid) {
+    /**
+     * Retrieves a specific employee request
+     * @param username The username of the request.
+     * @param rid The id of the request.
+     * @return A RequestDTO if successful, and null otherwise.
+     */
+    public RequestDTO getAllEmployeeRequestById(String username, Integer rid) {
         log.debug("Recieved username: " + username + " rid: " + rid);
-        String sql = "select first_name, last_name, r.*"
+        String sql = "select first_name, last_name, reimbursement_funds, r.*"
                 + " from employees, requests r"
                 + " where username = employee_username"
                 + " and username = ? and id = ?";
-        ArrayList<RequestDTO> requests = null;
+        RequestDTO request = null;
         
         // Attempting to execute query
         try (Connection conn = cu.getConnection()) {
@@ -98,22 +117,28 @@ public class RequestDAO {
             
             if (rs.next() ) {
                 // Found requests
-                requests = new ArrayList<>();
-                requests.add(createRequestDTO(rs));
+                request = createRequestDTO(rs);
             }
         } catch (SQLException e) {
             log.error("Failed to execute query " + sql);
             e.printStackTrace();
         }
         
-        return requests;
+        return request;
     }
     
     /*
      * === UTILITY ===
      */
     
-    private String addFilters(String sql, RequestStatus[] filter) {
+    /**
+     * Adds a prepared filter to the sql query.
+     * @param sql The sql statement to add the filter to.
+     * @param filter The list of filters to apply. (Only adds ? for setFilters)
+     * @return The sql statement with the prepared fitlers.
+     * @see setFilters
+     */
+    private String addStatusFilters(String sql, RequestStatus[] filter) {
         // Checking if there are filters to add.
         if (filter == null) {
             // No filters to add
@@ -136,7 +161,15 @@ public class RequestDAO {
         return builder.toString();
     }
     
-    private void setFilters(PreparedStatement ps, int index, RequestStatus[] filter) throws SQLException {
+    /**
+     * Adds the actual filters to the prepared sql statement.
+     * @param ps The prepared statement to set the filters
+     * @param index The index to start setting the filters.
+     * @param filter The filters to set.
+     * @see addFilters
+     * @throws SQLException
+     */
+    private void setStatusFilters(PreparedStatement ps, int index, RequestStatus[] filter) throws SQLException {
         // Checking if there are filters to set.
         if (filter == null) {
             // No filters to set
@@ -149,8 +182,14 @@ public class RequestDAO {
         }
     }
     
+    /**
+     * Creates a Request with the given result set.
+     * Result set must have the actual data elements.
+     * @param rs The result set that currently holds the data.
+     * @return A Request
+     * @throws SQLException
+     */
     private Request createRequest(ResultSet rs) throws SQLException {
-        log.debug("Creating Request Object");
         Request req = new Request(
                 rs.getInt("id"),
                 rs.getString("employee_username"),
@@ -173,11 +212,18 @@ public class RequestDAO {
         return req;
     }
     
+    /**
+     * Creates a RequestDTO with the given result set.
+     * Result set must have the actual data elements.
+     * @param rs The result set that currently holds the data.
+     * @return A RequestDTO
+     * @throws SQLException
+     */
     private RequestDTO createRequestDTO(ResultSet rs) throws SQLException {
-        log.debug("Creating Request DTO Object");
         RequestDTO req = new RequestDTO(
                 rs.getString("first_name"),
                 rs.getString("last_name"),
+                rs.getDouble("reimbursement_funds"),
                 createRequest(rs));
         
         return req;

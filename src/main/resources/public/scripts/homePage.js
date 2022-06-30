@@ -7,7 +7,7 @@
  *  - Including various elements
  * Calls for employee and request updates
  */
-initializePage();
+window.onload = initializePage;
 function initializePage() {
     // Init - global vars
     managerView = false;

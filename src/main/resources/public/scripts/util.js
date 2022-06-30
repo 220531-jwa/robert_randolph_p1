@@ -67,6 +67,41 @@ async function fetchPostRequest(reqUrl, reqBody) {
 }
 
 /**
+ * Fetches a put request at a given url.
+ * If the user isn't in an active sesion, redirects them to the login page.
+ * @param {The url to send the request to} reqUrl 
+ * @param {The body of the request} reqBody 
+ * @returns The body data as JSON if successful, and null otherwise
+ */
+async function fetchPutRequest(reqUrl, reqBody) {
+    // Getting userdata
+    const userData = getSessionUserData();
+
+    // Sending request
+    let response = await fetch(reqUrl, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Token': userData.password
+        },
+        body: reqBody
+    });
+
+    // Processing response
+    if (response.status === 200) {
+        let data = await response.json();
+        return data;
+    }
+    else if (response.status === 401) {
+        // Not in active session
+        notInActiveSession();
+    }
+    else {
+        return null;
+    }
+}
+
+/**
  * Gets the user data from the current session.
  * If no user data is found, then the user isn't in an active session.
  * @returns The user data for the currently active session

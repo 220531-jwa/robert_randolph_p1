@@ -18,15 +18,15 @@
             <div class="form-group row mb-4">
                 <div class="col readOnly manager">
                     <lable style="display: block" for="firstName">First Name:</lable>
-                    <input id="firstName" type="text" placeholder="Wolf" disabled>
+                    <input id="firstName" type="text" disabled>
                 </div>
                 <div class="col readOnly manager">
                     <lable style="display: block" for="lastName">Last Name:</lable>
-                    <input id="lastName" type="text" placeholder="Flow" disabled>
+                    <input id="lastName" type="text" disabled>
                 </div>
                 <div class="col">
-                    <lable style="display: block" for="reimAmountAval">Reimbursement Avaliable:</lable>
-                    <input id="reimAmountAval" type="text" placeholder="$100.00" disabled>
+                    <lable style="display: block" for="reimFunds">Reimbursement Avaliable:</lable>
+                    <input id="reimFunds" type="text" placeholder="$0.00" disabled>
                 </div>
             </div>
             <hr>
@@ -35,49 +35,44 @@
                 <div class="form-group row mb-4 update">
                     <div class="col">
                         <label style="display: block" for="inputStatus">Status:</label>
-                        <select id="inputStatus">
-                            <option value="Value1">Value1</option>
-                            <option value="Value12">Value12</option>
-                            <option value="Value13">Value13</option>
-                        </select>
+                        <select id="inputStatus"></select>
                     </div>
                 </div>
                 <div class="col">
+                    <div id="inputEventTypeError" style="color: red"></div>
                     <label style="display: block" for="inputEventType">Event Type:</label>
-                    <select id="inputEventType" class="input">
-                        <option value="Value1">Value1</option>
-                        <option value="Value12">Value12</option>
-                        <option value="Value13">Value13</option>
-                    </select>
+                    <select id="inputEventType" class="input"></select>
                 </div>
                 <div class="col">
+                    <div id="inputCostError" style="color: red"></div>
                     <lable style="display: block" for="inputCost">Cost:</lable>
-                    <input id="inputCost" class="input" type="number" min="0" max="9999.99" step="any" placeholder="$0.00">
+                    <input id="inputCost" required class="input" type="number" min="0" max="9999.99" step="any" placeholder="$0.00">
                 </div>
                 <div class="col update">
+                    <div id="inputReimAmountError" style="color: red"></div>
                     <lable style="display: block" for="inputReimAmount">Reimbursement Amount:</lable>
                     <input id="inputReimAmount" class="update manager" type="number" min="0" max="9999.99" step="any" placeholder="$0.00">
                 </div>
             </div>
             <div class="form-group row mb-4">
                 <div class="col">
+                    <div id="inputGradeFormatError" style="color: red"></div>
                     <label style="display: block" for="inputGradeFormat">Grade Format:</label>
-                    <select id="inputGradeFormat" class="input">
-                        <option value="Value1">Value1</option>
-                        <option value="Value12">Value12</option>
-                        <option value="Value13">Value13</option>
-                    </select>
+                    <select id="inputGradeFormat" class="input"></select>
                 </div>
                 <div class="col update">
+                    <div id="inputGradeError" style="color: red"></div>
                     <label style="display: block" for="inputGrade">Grade:</label>
                     <input class="update employee" id="inputGrade" type="text">
                 </div>
                 <div class="col">
+                    <div id="inputCutoffError" style="color: red"></div>
                     <label style="display: block" for="inputCutoff">Cutoff:</label>
                     <input id="inputCutoff" class="input" type="text">
                 </div>
             </div>
             <div class="form-group mb-4">
+                <div id="inputDescriptionError" style="color: red"></div>
                 <label style="display: block" for="inputDescription">Event Description</label>
                 <textarea id="inputDescription" class="form-control input" rows="3"></textarea>
             </div>
@@ -85,14 +80,17 @@
             <p><b>Event Location & Time</b></p>
             <div class="form-group row mb-4">
                 <div class="col">
+                    <div id="inputLocationError" style="color: red"></div>
                     <label style="display: block" for="inputLocation">Location</label>
                     <input id="inputLocation" class="input" type="text">
                 </div>
                 <div class="col">
+                    <div id="inputStartDateError" style="color: red"></div>
                     <label style="display: block" for="inputStartDate">Start Date</label>
                     <input id="inputStartDate" class="input" type="date">
                 </div>
                 <div class="col">
+                    <div id="inputStartTimeError" style="color: red"></div>
                     <label style="display: block" for="inputStartTime">Start Time</label>
                     <input id="inputStartTime" class="input" type="time">
                 </div>
@@ -121,10 +119,12 @@
                 </div>
             </div>
             <div class="form-group mb-4">
+                <div id="inputJustificationError" style="color: red"></div>
                 <label style="display: block" for="inputJustification">Justification For Reimbursement</label>
                 <textarea id="inputJustification" class="form-control input" rows="3"></textarea>
             </div>
             <div class="form-group mb-4 update">
+                <div id="inputReasonError" style="color: red"></div>
                 <label style="display: block" for="inputReason">Reason for Reimbursement Amount Change</label>
                 <textarea id="inputReason" class="form-control update manager" rows="3"></textarea>
             </div>

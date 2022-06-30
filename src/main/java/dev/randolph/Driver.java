@@ -5,6 +5,7 @@ import static io.javalin.apibuilder.ApiBuilder.path;
 import static io.javalin.apibuilder.ApiBuilder.post;
 
 import dev.randolph.controller.EmployeeController;
+import dev.randolph.controller.MetaController;
 import dev.randolph.controller.RequestController;
 import io.javalin.Javalin;
 import io.javalin.http.staticfiles.Location;
@@ -20,6 +21,7 @@ public class Driver {
         // Creating controllers
         EmployeeController employeeC = new EmployeeController();
         RequestController requestC = new RequestController();
+        MetaController metaC = new MetaController();
         
         // Starting server
         app.start(8080);
@@ -32,7 +34,10 @@ public class Driver {
             path("logout", () -> {
                 post(employeeC::logout);
             });
-            path("/employee", () -> {
+            path("/meta", () -> {
+                get(metaC::getMetaData);
+            });
+            path("/employee/{username}", () -> {
                 get(employeeC::getEmployeeByUsername);
             });
             path("/request", () -> {
@@ -40,6 +45,9 @@ public class Driver {
                 get(requestC::getAllRequests);
                 path("/{username}", () -> {
                     get(requestC::getAllEmployeeRequests);
+                    path("/{rid}", () -> {
+                        get(requestC::getEmployeeRequestById);
+                    });
                 });
             });
         });

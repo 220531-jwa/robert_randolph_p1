@@ -15,7 +15,7 @@ public class Request {
     private double reimAmount;
     private String grade;
     private GradeFormatType gradeFormat;
-    private String passCutoff;
+    private String cutoff;
     private String justification;
     private Timestamp startDate;
     private Timestamp submissionDate;
@@ -28,8 +28,8 @@ public class Request {
     public Request() {}
 
     public Request(int id, String employeeUsername, String eventType, RequestStatus status, double cost,
-            double reimAmount, String grade, GradeFormatType gradeFormat, String passCutoff, String justification,
-            Timestamp timestamp, Timestamp submissionDate, String eventLocation, String eventDescription,
+            double reimAmount, String grade, GradeFormatType gradeFormat, String cutoff, String justification,
+            Timestamp startDate, Timestamp submissionDate, String eventLocation, String eventDescription,
             boolean isUrgent, boolean exceedsFunds, String reason) {
         super();
         this.id = id;
@@ -40,9 +40,9 @@ public class Request {
         this.reimAmount = reimAmount;
         this.grade = grade;
         this.gradeFormat = gradeFormat;
-        this.passCutoff = passCutoff;
+        this.cutoff = cutoff;
         this.justification = justification;
-        this.startDate = timestamp;
+        this.startDate = startDate;
         this.submissionDate = submissionDate;
         this.eventLocation = eventLocation;
         this.eventDescription = eventDescription;
@@ -115,12 +115,12 @@ public class Request {
         this.gradeFormat = gradeFormat;
     }
 
-    public String getPassCutoff() {
-        return passCutoff;
+    public String getCutoff() {
+        return cutoff;
     }
 
-    public void setPassCutoff(String passCutoff) {
-        this.passCutoff = passCutoff;
+    public void setCutoff(String cutoff) {
+        this.cutoff = cutoff;
     }
 
     public String getJustification() {
@@ -191,9 +191,9 @@ public class Request {
     public String toString() {
         return "Request [id=" + id + ", employeeUsername=" + employeeUsername + ", eventType=" + eventType + ", status="
                 + status + ", cost=" + cost + ", reimAmount=" + reimAmount + ", grade=" + grade + ", gradeFormat="
-                + gradeFormat + ", passCutoff=" + passCutoff + ", justification=" + justification + ", startDate="
-                + startDate + ", submissionDate=" + submissionDate + ", eventLocation=" + eventLocation
-                + ", eventDescription=" + eventDescription + ", isUrgent=" + isUrgent + ", exceedsFunds=" + exceedsFunds
-                + ", reason=" + reason + "]";
+                + gradeFormat + ", cutoff=" + cutoff + ", justification=" + justification + ", startDate=" + startDate
+                + ", submissionDate=" + submissionDate + ", eventLocation=" + eventLocation + ", eventDescription="
+                + eventDescription + ", isUrgent=" + isUrgent + ", exceedsFunds=" + exceedsFunds + ", reason=" + reason
+                + "]";
     }
 }

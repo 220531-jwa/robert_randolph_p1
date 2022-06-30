@@ -6,14 +6,17 @@ public class RequestDTO {
     
     private String firstName;
     private String lastName;
+    private double reimFunds;
     private Request request;
+    private MetaDTO meta = MetaDTO.getMetaDTO();
     
     public RequestDTO() {}
 
-    public RequestDTO(String firstName, String lastName, Request request) {
+    public RequestDTO(String firstName, String lastName, double reimFunds, Request request) {
         super();
         this.firstName = firstName;
         this.lastName = lastName;
+        this.reimFunds = reimFunds;
         this.request = request;
     }
 
@@ -33,6 +36,14 @@ public class RequestDTO {
         this.lastName = lastName;
     }
 
+    public double getReimFunds() {
+        return reimFunds;
+    }
+
+    public void setReimFunds(double reimFunds) {
+        this.reimFunds = reimFunds;
+    }
+
     public Request getRequest() {
         return request;
     }
@@ -43,6 +54,7 @@ public class RequestDTO {
 
     @Override
     public String toString() {
-        return "EmployeeRequest [firstName=" + firstName + ", lastName=" + lastName + ", request=" + request + "]";
+        return "RequestDTO [firstName=" + firstName + ", lastName=" + lastName + ", reimFunds=" + reimFunds
+                + ", request=" + request + ", meta=" + meta + "]";
     }
 }

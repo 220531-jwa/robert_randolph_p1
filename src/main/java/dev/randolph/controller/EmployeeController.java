@@ -75,15 +75,15 @@ public class EmployeeController {
      */
     
     /**
-     * Retrieves employee information with the given id
-     * Takes target employee username as query
-     * Takes source token header
-     * @return 200 with employee information is found, 400 series error otherwise
+     * Retrieves employee information with the given id.
+     * Takes target employee username from path.
+     * Takes source token from header.
+     * @return 200 with employee information is found, 400 series error otherwise.
      */
     public void getEmployeeByUsername(Context c) {
-        log.debug("HTTP get request recieved at endpoint /employee");
+        log.debug("HTTP get request recieved at endpoint /employee/{username}");
         // Getting input
-        String username = c.queryParam("username");
+        String username = c.pathParam("username");
         String token = c.header("Token");
         
         // Getting Employee
@@ -97,8 +97,4 @@ public class EmployeeController {
         
         c.status(result.getSecond());
     }
-    
-    /**
-     * === POST / PATCH ===
-     */
 }

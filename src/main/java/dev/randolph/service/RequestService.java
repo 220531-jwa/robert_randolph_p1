@@ -24,6 +24,13 @@ public class RequestService {
      * === GET / READ ===
      */
     
+    /**
+     * Retrieves all employee requests from the database.
+     * Can filter based on a status.
+     * @param statusFilter The filter for status.
+     * @param token The active session token.
+     * @return 200 with requests if successful, 400 series with null otherwise.
+     */
     public Pair<List<RequestDTO>, Integer> getAllRequests(String statusFilter, String token) {
         log.debug("Recieved statusFilter: " + statusFilter + " token: " + token);
         // Validating input
@@ -54,18 +61,63 @@ public class RequestService {
         
         return new Pair<>(requests, 200);
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    public Pair<List<RequestDTO>, Integer> getAllEmployeeRequests(String username, Integer rid, String statusFilter, String token) {
-        log.debug("Recieved username: " + username + " rid: " + rid + " statusFilter: " + statusFilter + " token: " + token);
+
+    /**
+     * Retrieves all the requests of the given username.
+     * @param username The username the requests are associated with.
+     * @param statusFilter The status filter to filter by.
+     * @param token The token for the active session.
+     * @return 200 with requests if successful, 400 series with null otherwise.
+     */
+    public Pair<List<RequestDTO>, Integer> getAllEmployeeRequests(String username, String statusFilter, String token) {
+        log.debug("Recieved username: " + username + " statusFilter: " + statusFilter + " token: " + token);
         // Validating input
-        if (username == null || token == null || (rid != null && rid < 0) || username.isBlank() || token.isBlank()) {
+        if (username == null || token == null || username.isBlank() || token.isBlank()) {
+            log.error("username and/or token input(s) is/are invalid.");
+            return new Pair<>(null, 400);
+        }
+        
+        // Checking if user is in active session
+        if (!ActiveEmployeeSessions.isActiveEmployee(token)) {
+            log.error("User isn't in active session");
+            return new Pair<>(null, 401);
+        }
+        
+        // Checking if user is authorized to request employee reimbursement requests
+        String requesterUsername = ActiveEmployeeSessions.getActiveEmployeeUsername(token);
+        Employee emp = empDAO.getEmployeeByUsername(requesterUsername);
+        if (emp.getType() == EmployeeType.EMPLOYEE && emp.getUsername().equals(username)) {}    // Employee is getting their own requests
+        else if (emp.getType() == EmployeeType.MANAGER) {}                                      // Manager is getting requests
+        else {
+            log.error("User isn't authorized to know about given employee requests");
+            return new Pair<>(null, 403);
+        }
+        
+        // Getting status filter - Default is all
+        RequestStatus[] filter = getFilters(statusFilter);
+        
+        // Getting requests - Possible for requests to be empty
+        List<RequestDTO> requests = reqDAO.getAllEmployeeRequests(username, filter);
+        int status = 200;
+        if (requests == null) {
+            log.error("Target employee doesn't exist");
+            status = 404;
+        }
+        
+        return new Pair<>(requests, status);
+    }
+    
+    /**
+     * Retrieves the requests of the given username and request id.
+     * @param username The username the requests are associated with.
+     * @param rid The request id.
+     * @param token The token for the active session.
+     * @return 200 with request if successful, 400 series with null otherwise.
+     */
+    public Pair<RequestDTO, Integer> getEmployeeRequestById(String username, Integer rid, String token) {
+        log.debug("Recieved username: " + username + " rid: " + rid + " Token: " + token);
+        // validating input
+        if (username == null || token == null || rid == null || username.isBlank() || token.isBlank() || rid < 0) {
             log.error("username and/or rid and/or token input(s) is/are invalid.");
             return new Pair<>(null, 400);
         }
@@ -79,38 +131,22 @@ public class RequestService {
         // Checking if user is authorized to request employee reimbursement requests
         String requesterUsername = ActiveEmployeeSessions.getActiveEmployeeUsername(token);
         Employee emp = empDAO.getEmployeeByUsername(requesterUsername);
-        if (emp.getType() == EmployeeType.EMPLOYEE && emp.getUsername().equals(username)) {
-            // Employee is getting their own requests
-        }
-        else if (emp.getType() == EmployeeType.MANAGER) {
-            // Manager is getting requests
-        }
+        if (emp.getType() == EmployeeType.EMPLOYEE && emp.getUsername().equals(username)) {/*Does Nothing*/}    // Employee is getting their own request
+        else if (emp.getType() == EmployeeType.MANAGER) {/*Does Nothing*/}                                      // Manager is getting request
         else {
-            log.error("User isn't authorized to know about given employee requests");
+            log.error("User isn't authorized to know about given employee request");
             return new Pair<>(null, 403);
         }
         
-        // Getting status filter - Default is all
-        RequestStatus[] filter = getFilters(statusFilter);
-        
-        // Getting requests
-        // Possible for username or request id to not exist
-        List<RequestDTO> requests;
-        if (rid == null) {
-            // Getting all employee requests | uses filters
-            requests = reqDAO.getAllEmployeeRequests(username, filter);
-        }
-        else {
-            // Getting specific employee request | ignores filters
-            requests = reqDAO.getAllEmployeeRequestById(username, rid);
-        }
+        // Getting request
+        RequestDTO request = reqDAO.getAllEmployeeRequestById(requesterUsername, rid);
         int status = 200;
-        if (requests == null) {
-            log.error("Target employee or request doesn't exist");
+        if (request == null) {
+            log.error("Target employee and/or request id doesn't exist");
             status = 404;
         }
         
-        return new Pair<>(requests, status);
+        return new Pair<>(request, status);
     }
     
     /*
