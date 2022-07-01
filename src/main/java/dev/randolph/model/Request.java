@@ -2,35 +2,36 @@ package dev.randolph.model;
 
 import java.sql.Timestamp;
 
+import dev.randolph.model.enums.EventType;
 import dev.randolph.model.enums.GradeFormatType;
 import dev.randolph.model.enums.RequestStatus;
 
 public class Request {
     
-    private int id;
-    private String employeeUsername;
-    private String eventType;
-    private RequestStatus status;
-    private double cost;
-    private double reimAmount;
-    private String grade;
-    private GradeFormatType gradeFormat;
-    private String cutoff;
-    private String justification;
-    private Timestamp startDate;
-    private Timestamp submissionDate;
-    private String eventLocation;
-    private String eventDescription;
-    private boolean isUrgent;
-    private boolean exceedsFunds;
-    private String reason;
+    private Integer id;                 // Provided by database
+    private String employeeUsername;    // Provided by user
+    private EventType eventType;        // Provided by user
+    private RequestStatus status;       // Automatic -> Updated
+    private Double cost;                // Provided by user
+    private Double reimAmount;          // Automatic -> Updated Manager after creation
+    private String grade;               // Provided by User -> After creation
+    private GradeFormatType gradeFormat;// Provided by User
+    private String cutoff;              // Provided by User
+    private String justification;       // Provided by User
+    private Timestamp startDate;        // Provided by User
+    private Timestamp submissionDate;   // Automatic
+    private String eventLocation;       // Provided by User
+    private String eventDescription;    // Provided by User
+    private Boolean isUrgent;           // Automatic
+    private Boolean exceedsFunds;       // Automatic
+    private String reason;              // Provided by User -> Manager after creation
     
     public Request() {}
 
-    public Request(int id, String employeeUsername, String eventType, RequestStatus status, double cost,
-            double reimAmount, String grade, GradeFormatType gradeFormat, String cutoff, String justification,
+    public Request(Integer id, String employeeUsername, EventType eventType, RequestStatus status, Double cost,
+            Double reimAmount, String grade, GradeFormatType gradeFormat, String cutoff, String justification,
             Timestamp startDate, Timestamp submissionDate, String eventLocation, String eventDescription,
-            boolean isUrgent, boolean exceedsFunds, String reason) {
+            Boolean isUrgent, Boolean exceedsFunds, String reason) {
         super();
         this.id = id;
         this.employeeUsername = employeeUsername;
@@ -51,11 +52,11 @@ public class Request {
         this.reason = reason;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -67,11 +68,11 @@ public class Request {
         this.employeeUsername = employeeUsername;
     }
 
-    public String getEventType() {
+    public EventType getEventType() {
         return eventType;
     }
 
-    public void setEventType(String eventType) {
+    public void setEventType(EventType eventType) {
         this.eventType = eventType;
     }
 
@@ -83,19 +84,19 @@ public class Request {
         this.status = status;
     }
 
-    public double getCost() {
+    public Double getCost() {
         return cost;
     }
 
-    public void setCost(double cost) {
+    public void setCost(Double cost) {
         this.cost = cost;
     }
 
-    public double getReimAmount() {
+    public Double getReimAmount() {
         return reimAmount;
     }
 
-    public void setReimAmount(double reimAmount) {
+    public void setReimAmount(Double reimAmount) {
         this.reimAmount = reimAmount;
     }
 
@@ -163,19 +164,19 @@ public class Request {
         this.eventDescription = eventDescription;
     }
 
-    public boolean isUrgent() {
+    public Boolean getIsUrgent() {
         return isUrgent;
     }
 
-    public void setUrgent(boolean isUrgent) {
+    public void setIsUrgent(Boolean isUrgent) {
         this.isUrgent = isUrgent;
     }
 
-    public boolean isExceedsFunds() {
+    public Boolean getExceedsFunds() {
         return exceedsFunds;
     }
 
-    public void setExceedsFunds(boolean exceedsFunds) {
+    public void setExceedsFunds(Boolean exceedsFunds) {
         this.exceedsFunds = exceedsFunds;
     }
 

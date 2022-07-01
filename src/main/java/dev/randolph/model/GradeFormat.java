@@ -4,27 +4,17 @@ import dev.randolph.model.enums.GradeFormatType;
 
 public class GradeFormat {
     
-    private int id;
     private GradeFormatType type;
     private String cutoff;
-    private boolean presentationRequired;
+    private Boolean presentationRequired;
     
     public GradeFormat() {}
 
-    public GradeFormat(int id, GradeFormatType type, String cutoff, boolean presentationRequired) {
+    public GradeFormat(GradeFormatType type, String cutoff, Boolean presentationRequired) {
         super();
-        this.id = id;
         this.type = type;
         this.cutoff = cutoff;
         this.presentationRequired = presentationRequired;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public GradeFormatType getType() {
@@ -43,17 +33,17 @@ public class GradeFormat {
         this.cutoff = cutoff;
     }
 
-    public boolean isPresentationRequired() {
+    public Boolean getPresentationRequired() {
         return presentationRequired;
     }
 
-    public void setPresentationRequired(boolean presentationRequired) {
+    public void setPresentationRequired(Boolean presentationRequired) {
         this.presentationRequired = presentationRequired;
     }
 
     @Override
     public String toString() {
-        return "GradeFormat [id=" + id + ", type=" + type + ", cutoff=" + cutoff + ", presentationRequired="
-                + presentationRequired + "]";
+        return "GradeFormat [type=" + type + ", cutoff=" + cutoff + ", presentationRequired=" + presentationRequired
+                + "]";
     }
 }

@@ -9,14 +9,13 @@ public class Employee {
     private String firstName;
     private String lastName;
     private EmployeeType type;
-    private double reimFunds;
-    private double funds;
+    private Double reimFunds;
+    private Double funds;
 
-    public Employee() {
-    }
+    public Employee() {}
 
     public Employee(String username, String password, String firstName, String lastName, EmployeeType type,
-            double reimFunds, double funds) {
+            Double reimFunds, Double funds) {
         super();
         this.username = username;
         this.password = password;
@@ -67,25 +66,25 @@ public class Employee {
         this.type = type;
     }
 
-    public double getReimFunds() {
+    public Double getReimFunds() {
         return reimFunds;
     }
 
-    public void setReimFunds(double reimFunds) {
+    public void setReimFunds(Double reimFunds) {
         this.reimFunds = reimFunds;
     }
 
-    public double getFunds() {
+    public Double getFunds() {
         return funds;
     }
 
-    public void setFunds(double funds) {
+    public void setFunds(Double funds) {
         this.funds = funds;
     }
 
     @Override
     public String toString() {
         return "Employee [username=" + username + ", password=" + password + ", firstName=" + firstName + ", lastName="
-                + lastName + ", type=" + type + ", reimFunds=" + reimFunds + ", funds=" + funds + ", token=" + "]";
-    };
+                + lastName + ", type=" + type + ", reimFunds=" + reimFunds + ", funds=" + funds + "]";
+    }
 }

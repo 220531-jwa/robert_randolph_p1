@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import dev.randolph.model.Request;
 import dev.randolph.model.DTO.RequestDTO;
+import dev.randolph.model.enums.EventType;
 import dev.randolph.model.enums.GradeFormatType;
 import dev.randolph.model.enums.RequestStatus;
 import dev.randolph.util.ConnectionUtil;
@@ -22,6 +23,59 @@ public class RequestDAO {
     private ConnectionUtil cu = ConnectionUtil.getConnectionUtil();
     private static Logger log = LogManager.getLogger(RequestDAO.class);
     
+    /*
+     * === CREATE ===
+     */
+    
+    /**
+     * Adds a request to the database.
+     * @param request The request to add
+     * @return Returns true if the 
+     */
+    public boolean createRequest(Request reqData) {
+        log.debug("Recieved reqData: " + reqData);
+        String sql = "insert into requsts"
+                + " (id, employee_username, event_type,"
+                + "status, request_cost, reimbursement_amount, grade_format,"
+                + "cutoff, justification, submission_date, start_date,"
+                + "event_location, event_description, urgent, exceeds_funds)"
+                + " values (default, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        // Attempting to execute query
+        try (Connection conn = cu.getConnection()) {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, reqData.getEmployeeUsername());
+            ps.setString(2, reqData.getEventType().name());
+            ps.setString(3, reqData.getStatus().name());
+            ps.setDouble(4, reqData.getCost());
+            ps.setDouble(5, reqData.getReimAmount());
+            ps.setString(6, reqData.getGradeFormat().name());
+            ps.setString(7, reqData.getCutoff());
+            ps.setString(8, reqData.getJustification());
+            ps.setTimestamp(9, reqData.getSubmissionDate());
+            ps.setTimestamp(10, reqData.getStartDate());
+            ps.setString(11, reqData.getEventLocation());
+            ps.setString(12, reqData.getEventDescription());
+            ps.setBoolean(13, reqData.getIsUrgent());
+            ps.setBoolean(14, reqData.getExceedsFunds());
+            int changes = ps.executeUpdate();
+            
+            if (changes != 0) {
+                // Created
+                return true;
+            }
+        } catch (SQLException e) {
+            log.error("Failed to execute query " + sql);
+            e.printStackTrace();
+        }
+        
+        return false;
+    }
+    
+    /*
+     * === READ ===
+     */
+    
     /**
      * Retrieves all the employee requests from the database.
      * Can add filters to filter by status.
@@ -30,7 +84,7 @@ public class RequestDAO {
      */
     public List<RequestDTO> getAllRequests(RequestStatus[] filter) {
         log.debug("Recieved filter: " + filter);
-        String sql = "select first_name, last_name, r.*"
+        String sql = "select username, first_name, last_name, r.*"
                 + " from employees, requests r"
                 + " where username = employee_username";
         ArrayList<RequestDTO> requests = new ArrayList<>();
@@ -64,7 +118,7 @@ public class RequestDAO {
      */
     public List<RequestDTO> getAllEmployeeRequests(String username, RequestStatus[] filter) {
         log.debug("Recieved username: " + username + " filter: " + Arrays.toString(filter));
-        String sql = "select first_name, last_name, r.*"
+        String sql = "select username, first_name, last_name, r.*"
                 + " from employees, requests r"
                 + " where username = employee_username"
                 + " and username = ?";
@@ -103,7 +157,7 @@ public class RequestDAO {
      */
     public RequestDTO getAllEmployeeRequestById(String username, Integer rid) {
         log.debug("Recieved username: " + username + " rid: " + rid);
-        String sql = "select first_name, last_name, reimbursement_funds, r.*"
+        String sql = "select username, first_name, last_name, reimbursement_funds, r.*"
                 + " from employees, requests r"
                 + " where username = employee_username"
                 + " and username = ? and id = ?";
@@ -126,6 +180,46 @@ public class RequestDAO {
         }
         
         return request;
+    }
+    
+    /*
+     * === UPDATE ===
+     */
+    
+    /**
+     * Updates the request with the given data values.
+     * Only updates status, reim amount, grade, reason.
+     * @param request The request to change with the updated data.
+     * @return True if successful, and false otherwise.
+     */
+    public boolean updateRequest(Request reqData) {
+        log.debug("Recieved reqData: " + reqData);
+        String sql = "update requests"
+                + " set (status, reimbursement_amount, grade, reason) ="
+                + " (?, ?, ?, ?)"
+                + " where employee_username = ? and id = ?";
+        
+        // Attempting to execute query
+        try (Connection conn = cu.getConnection()) {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, reqData.getStatus().name());
+            ps.setDouble(2, reqData.getReimAmount());
+            ps.setString(3, reqData.getGrade());
+            ps.setString(4, reqData.getReason());
+            ps.setString(5, reqData.getEmployeeUsername());
+            ps.setInt(6, reqData.getId());
+            int changes = ps.executeUpdate();
+            
+            if (changes != 0) {
+                // Updated
+                return true;
+            }
+        } catch (SQLException e) {
+            log.error("Failed to execute query " + sql);
+            e.printStackTrace();
+        }
+        
+        return false;
     }
     
     /*
@@ -194,7 +288,7 @@ public class RequestDAO {
         Request req = new Request(
                 rs.getInt("id"),
                 rs.getString("employee_username"),
-                rs.getString("event_type"),
+                EventType.valueOf(rs.getString("event_type")),
                 RequestStatus.valueOf(rs.getString("status")),
                 rs.getDouble("request_cost"),
                 rs.getDouble("reimbursement_amount"),
@@ -217,14 +311,16 @@ public class RequestDAO {
      * Creates a RequestDTO with the given result set.
      * Result set must have the actual data elements.
      * @param rs The result set that currently holds the data.
+     * @param reimFunds Whether or not to check for reimbursement funds
      * @return A RequestDTO
      * @throws SQLException
      */
     private RequestDTO createRequestDTO(ResultSet rs, boolean reimFunds) throws SQLException {
         RequestDTO req = new RequestDTO(
+                rs.getString("username"),
                 rs.getString("first_name"),
                 rs.getString("last_name"),
-                reimFunds ? rs.getDouble("reimbursement_funds") : 0,
+                reimFunds ? rs.getDouble("reimbursement_funds") : null,
                 createRequest(rs));
         
         return req;

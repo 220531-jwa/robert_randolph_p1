@@ -63,7 +63,7 @@ public class EmployeeController {
             log.info("Logout was successful.");
         }
         else {
-            log.info("Token wasn't associated with an active account.");
+            log.error("Token wasn't associated with an active account.");
         }
         
         // Saying logout was successful (Wasn't active to being with, or was but now isn't)

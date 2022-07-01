@@ -4,24 +4,15 @@ import dev.randolph.model.enums.EventType;
 
 public class Event {
     
-    private int id;
     private EventType type;
-    private double reimPercent;
+    private Double reimPercent;
     
     public Event() {}
 
-    public Event(int id, EventType type) {
+    public Event(EventType type, Double reimPercent) {
         super();
-        this.id = id;
         this.type = type;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
+        this.reimPercent = reimPercent;
     }
 
     public EventType getType() {
@@ -32,16 +23,16 @@ public class Event {
         this.type = type;
     }
 
-    public double getReimPercent() {
+    public Double getReimPercent() {
         return reimPercent;
     }
 
-    public void setReimPercent(double reimPercent) {
+    public void setReimPercent(Double reimPercent) {
         this.reimPercent = reimPercent;
     }
 
     @Override
     public String toString() {
-        return "Event [id=" + id + ", type=" + type + ", reimPercent=" + reimPercent + "]";
-    };
+        return "Event [type=" + type + ", reimPercent=" + reimPercent + "]";
+    }
 }

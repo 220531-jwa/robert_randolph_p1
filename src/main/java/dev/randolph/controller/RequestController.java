@@ -5,8 +5,10 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import dev.randolph.model.Request;
 import dev.randolph.model.DTO.RequestDTO;
 import dev.randolph.service.RequestService;
+import io.javalin.core.validation.BodyValidator;
 import io.javalin.core.validation.Validator;
 import io.javalin.http.Context;
 import kotlin.Pair;
@@ -20,12 +22,31 @@ public class RequestController {
      * === POST ===
      */
     
+    /**
+     * Creates a request that is associated with the given username.
+     * Takes username from path.
+     * Takes Token from header.
+     * Takes request data from body.
+     * @return 200 With request data, 400 series error otherwise.
+     */
     public void createNewRequest(Context c) {
         log.debug("Http post request recieved at endpoint /request/{username}");
-        c.result("{\"Success\": \"Yay!\"}");
-        c.status(200);
-        // Get employee id
-        // Check authorization
+        // Getting input
+        String username = c.pathParam("username");
+        String token = c.header("Token");
+        BodyValidator<Request> vrequest = c.bodyValidator(Request.class);
+        Request request = vrequest.errors().isEmpty() ? vrequest.get() : null;
+        
+        // Creating request
+        Pair<Boolean, Integer> result = reqService.createRequest(username, request, token);
+        
+        // Checking if request was created
+        if (result.getFirst()) {
+            log.info("Successfully created request");
+            c.json(result.getFirst());
+        }
+        
+        c.status(result.getSecond());
     }
     
     /*
@@ -113,14 +134,32 @@ public class RequestController {
      * === PATCH ===
      */
     
+    /**
+     * Updates a specific reimbursement request of the given employee username
+     * Takes username from path.
+     * Takes request id from path.
+     * Takes source token from header.
+     * @return 200 with update request, 400 series error otherwise.
+     */
     public void updateEmployeeRequestById(Context c) {
         log.debug("Http put request recieved at endpoint /request/{username}/{rid}");
-        c.result("{\"Success\": \"Yay!\"}");
-        c.status(200);
-        // Get employee id (who is updating)
-        // Get request id (request to update)
-        // Get optional body params (request fields to update)
-        //  - status, urgent, reason, grade, reim-amount, exceeds funds
-        // Check authorization
+        // Getting input
+        String username = c.pathParam("username");
+        Validator<Integer> vrid = c.pathParamAsClass("rid", Integer.class);
+        Integer rid = vrid.hasValue() ? vrid.get() : null;
+        String token = c.header("Token");
+        BodyValidator<Request> vrequest = c.bodyValidator(Request.class);
+        Request request = vrequest.errors().isEmpty() ? vrequest.get() : null;
+        
+        // Creating request
+        Pair<Boolean, Integer> result = reqService.updateRequest(username, rid, request, token);
+        
+        // Checking if request was created
+        if (result.getFirst()) {
+            log.info("Successfully created request");
+            c.json(result.getFirst());
+        }
+    
+        c.status(result.getSecond());
     }
 }

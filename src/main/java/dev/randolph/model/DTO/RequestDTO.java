@@ -4,20 +4,33 @@ import dev.randolph.model.Request;
 
 public class RequestDTO {
     
+    // Employee - Associated with request
+    private String username;
     private String firstName;
     private String lastName;
-    private double reimFunds;
+    private Double reimFunds;
+    // Request
     private Request request;
+    // Meta
     private MetaDTO meta = MetaDTO.getMetaDTO();
     
     public RequestDTO() {}
 
-    public RequestDTO(String firstName, String lastName, double reimFunds, Request request) {
+    public RequestDTO(String username, String firstName, String lastName, Double reimFunds, Request request) {
         super();
+        this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.reimFunds = reimFunds;
         this.request = request;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getFirstName() {
@@ -36,11 +49,11 @@ public class RequestDTO {
         this.lastName = lastName;
     }
 
-    public double getReimFunds() {
+    public Double getReimFunds() {
         return reimFunds;
     }
 
-    public void setReimFunds(double reimFunds) {
+    public void setReimFunds(Double reimFunds) {
         this.reimFunds = reimFunds;
     }
 
@@ -56,13 +69,9 @@ public class RequestDTO {
         return meta;
     }
 
-    public void setMeta(MetaDTO meta) {
-        this.meta = meta;
-    }
-
     @Override
     public String toString() {
-        return "RequestDTO [firstName=" + firstName + ", lastName=" + lastName + ", reimFunds=" + reimFunds
-                + ", request=" + request + ", meta=" + meta + "]";
+        return "RequestDTO [username=" + username + ", firstName=" + firstName + ", lastName=" + lastName
+                + ", reimFunds=" + reimFunds + ", request=" + request + ", meta=" + meta + "]";
     }
 }

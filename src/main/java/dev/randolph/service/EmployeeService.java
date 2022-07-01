@@ -23,7 +23,7 @@ public class EmployeeService {
      * If the passed credentials were invalid or the employee doesn't exist will return null.
      * @param username The username of the employee.
      * @param password The password of the employee.
-     * @return The employee if successful, and null otherwise. Status depends on success/error
+     * @return 200 with employee if successful, and 400 null series error otherwise.
      */
     public Pair<Employee, Integer> loginWithCredentials(String username, String password) {
         log.debug("Recieved credentials: " + username + " | " + password);
@@ -54,8 +54,8 @@ public class EmployeeService {
         
         // Checking if token is null
         if (token == null || token.isBlank()) {
-            log.error("Token failed to generate.");
-            return new Pair<>(null, 500);
+            log.error("Token failed to generate."); // Something horribly wrong happened
+            return new Pair<>(null, 503);
         }
         else {
             // Token successfully generated
@@ -98,6 +98,8 @@ public class EmployeeService {
     
     /**
      * Retrieves the employee with the given username from the database.
+     * Authorization:
+     *  - User can only get their own information
      * @param username The target username of the employee to get.
      * @param token The source token of the active user.
      * @return The employee if they exist, and null otherwise. Status depends on success/error
@@ -134,9 +136,4 @@ public class EmployeeService {
         // Getting employee -> 404 used when employee is null
         return new Pair<>(emp, status);
     }
-
-    
-    /*
-     * === PUT / PATCH / UPDATE ===
-     */
 }

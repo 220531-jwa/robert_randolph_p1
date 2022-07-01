@@ -24,7 +24,7 @@ public class EmployeeDAO {
     /**
      * Gets an employee by their username
      * @param username The username of the employee
-     * @return 
+     * @return The employee if successful, and null otherwise.
      */
     public Employee getEmployeeByUsername(String username) {
         // Init
@@ -49,6 +49,40 @@ public class EmployeeDAO {
         }
         
         return emp;
+    }
+    
+    /*
+     * === UPDATE ===
+     */
+    
+    /**
+     * Updates the funds of the given employee.
+     * @param emp The updated employee data
+     * @return true if update was successful, and false otherwise.
+     */
+    public boolean updateEmployeeFunds(Employee emp) {
+        log.debug("Recieved emp: " + emp);
+        String sql = "update employees"
+                + " set funds = ?"
+                + " where username = ?";
+        
+        // Attempting to execute query
+        try (Connection conn = cu.getConnection()) {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setDouble(1, emp.getFunds());
+            ps.setString(2, emp.getUsername());
+            int changes = ps.executeUpdate();
+            
+            if (changes != 0) {
+                // Updated
+                return true;
+            }
+        } catch (SQLException e) {
+            log.error("Failed to execute query " + sql);
+            e.printStackTrace();
+        }
+        
+        return false;
     }
     
     /*

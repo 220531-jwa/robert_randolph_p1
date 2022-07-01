@@ -1,9 +1,9 @@
 package dev.randolph;
 
 import static io.javalin.apibuilder.ApiBuilder.get;
+import static io.javalin.apibuilder.ApiBuilder.patch;
 import static io.javalin.apibuilder.ApiBuilder.path;
 import static io.javalin.apibuilder.ApiBuilder.post;
-import static io.javalin.apibuilder.ApiBuilder.put;
 
 import dev.randolph.controller.EmployeeController;
 import dev.randolph.controller.MetaController;
@@ -16,7 +16,7 @@ public class Driver {
     public static void main(String[] args) {
         // Init server
         Javalin app = Javalin.create(config -> {
-            config.addStaticFiles("/public", Location.CLASSPATH);       // Needed so html pages find scripts
+            config.addStaticFiles("/public", Location.CLASSPATH);
         });
         
         // Creating controllers
@@ -48,7 +48,7 @@ public class Driver {
                     get(requestC::getAllEmployeeRequests);
                     path("/{rid}", () -> {
                         get(requestC::getEmployeeRequestById);
-                        put(requestC::updateEmployeeRequestById);
+                        patch(requestC::updateEmployeeRequestById);
                     });
                 });
             });

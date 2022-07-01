@@ -77,13 +77,13 @@ async function fetchPostRequest(reqUrl, reqBody) {
  * @param {The body of the request} reqBody 
  * @returns The body data as JSON if successful, and null otherwise
  */
-async function fetchPutRequest(reqUrl, reqBody) {
+async function fetchPatchRequest(reqUrl, reqBody) {
     // Getting userdata
     const userData = getSessionUserData();
 
     // Sending request
     let response = await fetch(reqUrl, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
             'Token': userData.password

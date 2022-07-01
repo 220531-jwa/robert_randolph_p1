@@ -72,6 +72,8 @@ async function updateRequestInformation() {
 
     // Getting up to date request information
     let requestData = await getReimbursementRequests();
+    console.log('request data');
+    console.log(requestData);
 
     // Checking if fetch was succesful
     if (requestData === null) {
@@ -180,16 +182,16 @@ function manageRequests() {
  */
 function newRequest() {
     // move to new html page, a form to enter request information
-    location.href = "../html/requestPage.html?id=0";
+    location.href = "../html/requestPage.html";
 }
 
 /**
  * Redirects the user to a new page to see all the details of the selected request.
  * @param {The id of the request to find} rid 
  */
-function seeRequest(rid) {
+function seeRequest(username, rid) {
     // Move to new html page, to see specific request details
-    location.href = `../html/requestPage.html?id=${rid}&managerView=${managerView}`;
+    location.href = `../html/requestPage.html?username=${username}&id=${rid}&managerView=${managerView}`;
 }
 
 /*
@@ -206,6 +208,7 @@ function seeRequest(rid) {
  */
 function createTableRow(requestData) {
     // Seperating data
+    let username = requestData.username;
     let firstName = requestData.firstName;
     let lastName = requestData.lastName;
     let request = requestData.request;
@@ -242,7 +245,7 @@ function createTableRow(requestData) {
         if (i == 1) {
             let a = document.createElement('a');
             a.setAttribute('href', '#');
-            a.addEventListener('click', () => seeRequest(id));
+            a.addEventListener('click', () => seeRequest(username, id));
             a.innerHTML = val;
             td.append(a);
         }

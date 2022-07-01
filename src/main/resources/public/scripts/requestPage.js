@@ -8,30 +8,27 @@ function initializePage() {
     let query = window.location.search;
     const params = new URLSearchParams(query);
 
-    // Checking if id was given
-    if (!params.has('id')) {
-        notFound();
-        return;
-    }
+    // Checking if new page
+    if (params.has('id')) {
+        // Getting params
+        // Global
+        username = params.get('username')
+        requestId = params.get('id');
+        managerView = params.get('managerView') === 'true';
 
-    // Global
-    requestId = params.get('id');
-    managerView = params.get('managerView') === 'true';
+        // Validating params
+        if (!params.has('username') || !params.has('managerView') || requestId < 0) {
+            // Invalild
+            notFound();
+            return;
+        }
 
-    // Validating id
-    if (requestId < 0) {
-        notFound();
-        return;
-    }
-
-    // Checking if viewing already existing request
-    if (requestId == 0) {
-        // new request
-        updateNewRequest();
+        // Valid
+        updateExistingRequest();
     }
     else {
-        // existing request
-        updateExistingRequest();
+        // Getting new page
+        updateNewRequest();
     }
 }
 
@@ -296,7 +293,7 @@ function createRequest() {
     // Init
     const userData = getSessionUserData();
     const url = `http://localhost:8080/request/${userData.username}`;
-
+    
     // Creating body with form details
     const formBody = {
         eventType: document.getElementById('inputEventType').value,
@@ -305,11 +302,14 @@ function createRequest() {
         cutoff: document.getElementById('inputCutoff').value,
         eventDescription: document.getElementById('inputDescription').value,
         eventLocation: document.getElementById('inputLocation').value,
-        startDate: `${document.getElementById('inputStartDate').value} ${document.getElementById('inputStarTime').value}`,
+        startDate: Date.parse(`${document.getElementById('inputStartDate').value} ${document.getElementById('inputStartTime').value}`),
         justification: document.getElementById('inputJustification').value
     }
+    const formBodyJson = JSON.stringify(formBody);
+    console.log('form body');
+    console.log(formBody);
 
-    return fetchPostRequest(url, formBody);
+    return fetchPostRequest(url, formBodyJson);
 }
 
 /**
@@ -318,8 +318,7 @@ function createRequest() {
  */
 function getRequest() {
     // Init
-    const userData = getSessionUserData();
-    const url = `http://localhost:8080/request/${userData.username}/${requestId}`;
+    const url = `http://localhost:8080/request/${username}/${requestId}`;
 
     return fetchGetRequest(url);
 }
@@ -343,14 +342,19 @@ function getMetaData() {
  */
 function updateRequest() {
     // Init
-    const userData = getSessionUserData();
-    const url = `http://localhost:8080/request/${userData.username}/${requestId}`;
+    const url = `http://localhost:8080/request/${username}/${requestId}`;
 
     const formBody = {
-
+        status: document.getElementById('inputStatus').value,
+        reimAmount: document.getElementById('inputReimAmount').value,
+        grade: document.getElementById('inputGrade').value,
+        reason: document.getElementById('inputReason').value
     }
+    const formBodyJson = JSON.stringify(formBody);
+    console.log('form body');
+    console.log(formBody);
 
-    return fetchPutRequest(url, formBody);
+    return fetchPatchRequest(url, formBodyJson);
 }
 
 /*
