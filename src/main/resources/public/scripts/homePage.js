@@ -15,9 +15,7 @@ function initializePage() {
     // Adding event listener to filter
     // - Filter will update the table after a NEW item was selected.
     let filter = document.getElementById('filter');
-    filter.addEventListener('change', () => {
-        updateRequestInformation();
-    });
+    filter.addEventListener('change', updateRequestInformation);
 
     // Updating employee information
     updateEmployeeInformation();
@@ -101,7 +99,7 @@ async function updateRequestInformation() {
 function getEmployeeData() {
     // Init
     const userData = getSessionUserData();
-    const url = `http://localhost:8080/employee?username=${userData.username}`;
+    const url = `http://localhost:8080/employee/${userData.username}`;
 
     return fetchGetRequest(url);
 }
@@ -129,7 +127,7 @@ function getReimbursementRequests() {
 
     // Adding filter query param
     let filter = document.getElementById('filter');
-    let value = filter.options[filter.selectedIndex].value;
+    let value = filter.value;
     url += `?statusFilter=${value}`;
 
     return fetchGetRequest(url);
@@ -217,12 +215,12 @@ function createTableRow(requestData) {
     if (managerView) {
         values = [`${firstName} ${lastName}`, request.eventType, `$${request.cost.toFixed(2)}`,
             `$${request.reimAmount.toFixed(2)}`, request.status, request.urgent, request.grade,
-            request.passCutoff, request.justification, request.startDate];
+            request.cutoff, request.justification, getDateTimeFromTimestamp(request.startDate)];
     }
     else {
         values = [request.eventType, `$${request.cost.toFixed(2)}`,
             `$${request.reimAmount.toFixed(2)}`, request.status, request.grade,
-            request.passCutoff, request.startDate];
+            request.cutoff, getDateTimeFromTimestamp(request.startDate)];
     }
 
     // Creating row

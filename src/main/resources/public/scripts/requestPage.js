@@ -15,17 +15,17 @@ function initializePage() {
     }
 
     // Global
-    id = params.get('id');
+    requestId = params.get('id');
     managerView = params.get('managerView') === 'true';
 
     // Validating id
-    if (id < 0) {
+    if (requestId < 0) {
         notFound();
         return;
     }
 
     // Checking if viewing already existing request
-    if (id == 0) {
+    if (requestId == 0) {
         // new request
         updateNewRequest();
     }
@@ -49,14 +49,14 @@ function initializePage() {
  */
 async function updateNewRequest() {
     // Getting meta information
-    let url = "http://localhost:8080/meta";
-    // let metaData = await fetchGetRequest(url);
+    metaData = await getMetaData(); // Global for input validation
 
-    // // Checking if successful
-    // if (metaData === null) {
-    //     // Failed to fetch
-    //     notFound();
-    // }
+    // Checking if successful
+    if (metaData === null) {
+        // Failed to fetch
+        notFound();
+        return;
+    }
 
     // === UPDATEING LISTENERS ===
 
@@ -82,7 +82,7 @@ async function updateNewRequest() {
 
     // Filling Event Types
     let eventTypeElement = document.getElementById("inputEventType");
-    for (ev of meta.events) {
+    for (ev of metaData.events) {
         let optionElement = document.createElement('option');
         optionElement.value = ev;
         optionElement.innerHTML = ev;
@@ -91,10 +91,10 @@ async function updateNewRequest() {
 
     // Filling Grade Formats
     let gradeFormatElement = document.getElementById("inputGradeFormat");
-    for (ev of meta.gradeFormats) {
+    for (gradeFormat of metaData.gradeFormats) {
         let optionElement = document.createElement('option');
-        optionElement.value = ev;
-        optionElement.innerHTML = ev;
+        optionElement.value = gradeFormat.first;
+        optionElement.innerHTML = gradeFormat.first;
         gradeFormatElement.append(optionElement);
     }
 }
@@ -109,10 +109,18 @@ async function updateNewRequest() {
  */
 async function updateExistingRequest() {
     // Getting request data
-    let data = await getRequest();
-    let requestData = data[0];
+    let requestData = await getRequest();
+    console.log('request data');
+    console.log(requestData);
+
+    // Checking if sucessful
+    if (requestData === null) {
+        notFound();
+        return;
+    }
+    
     let request = requestData.request;
-    let meta = requestData.meta;
+    metaData = requestData.meta;    // Global for input verification
 
     // === UPDATEING LISTENERS ===
 
@@ -123,7 +131,7 @@ async function updateExistingRequest() {
     // === UPDATING FLAGS ===
 
     // For manager -> If reimAmount is changed, a reason must be provided.
-    previousReimAmount = request.reimAmount.toFixed(2);
+    previousReimAmount = request.reimAmount.toFixed(2); // Global for input verification
 
     // === MODIFYING ELEMENTS ===
 
@@ -143,7 +151,7 @@ async function updateExistingRequest() {
     // Checking if remaining elements can be edited
     // Cannot change a finished request
     let finished = false;
-    if (meta.statuses[1].includes(request.status)) {
+    if (metaData.statuses[1].includes(request.status)) {
          // Status is finished
          for (elem of updateElements) {
             elem.disabled = true;
@@ -188,16 +196,16 @@ async function updateExistingRequest() {
     // Employee Information
     if (managerView) {
         // Manager View - Manger needs to know who's request it is (employee knows who they are)
-        document.getElementById('firstName').value = meta.firstName;
-        document.getElementById('lastName').value = meta.lastName;
+        document.getElementById('firstName').value = requestData.firstName;
+        document.getElementById('lastName').value = requestData.lastName;
     }
-    document.getElementById('reimFunds').value = `$${meta.reimFunds.toFixed(2)}`;
+    document.getElementById('reimFunds').value = `$${requestData.reimFunds.toFixed(2)}`;
 
     // Event Details
     if (managerView) {
         // Status - Manager View - Adding all statuses
         let statusElement = document.getElementById('inputStatus');
-        for (stats of meta.statuses) {
+        for (stats of metaData.statuses) {
             for (stat of stats) {
                 let optionElement = document.createElement('option');
                 optionElement.value = stat;
@@ -231,6 +239,7 @@ async function updateExistingRequest() {
         let optionElement = document.createElement('option');
         optionElement.value = request.eventType;
         optionElement.innerHTML = request.eventType;
+        optionElement.selected = true;
         eventTypeElement.append(optionElement);
     }
     document.getElementById('inputEventType').value = request.eventType;
@@ -242,6 +251,7 @@ async function updateExistingRequest() {
         let optionElement = document.createElement('option');
         optionElement.value = request.gradeFormat;
         optionElement.innerHTML = request.gradeFormat;
+        optionElement.selected = true;
         gradeFormatElement.append(optionElement);
     }
     document.getElementById('inputGrade').value = request.grade;
@@ -309,7 +319,18 @@ function createRequest() {
 function getRequest() {
     // Init
     const userData = getSessionUserData();
-    const url = `http://localhost:8080/request/${userData.username}?rid=${id}`;
+    const url = `http://localhost:8080/request/${userData.username}/${requestId}`;
+
+    return fetchGetRequest(url);
+}
+
+/**
+ * Fetcg GET call for meta data.
+ * @returns The data of the get request
+ */
+function getMetaData() {
+    // Init
+    let url = "http://localhost:8080/meta";
 
     return fetchGetRequest(url);
 }
@@ -323,7 +344,7 @@ function getRequest() {
 function updateRequest() {
     // Init
     const userData = getSessionUserData();
-    const url = `http://localhost:8080/request/${userData.username}/${id}`;
+    const url = `http://localhost:8080/request/${userData.username}/${requestId}`;
 
     const formBody = {
 
@@ -349,25 +370,54 @@ function back() {
  */
 async function submit() {
     // Checking if required fields are filled out
-    validateNewRequestInputs();
-    // let data = await fetchPostRequest();
+    let valid = validateNewRequestInputs();
 
-    // // Checking if submission was valid
-    // if (data === null) {
-    //     // Failed
-    //     // Show errors
-    // }
-    // else {
-    //     // Success - Moving back to homepage
-    //     back();
-    // }
+    // Checking if valid
+    if (!valid) {
+        // Not valid
+        return;
+    }
+
+    // Getting post response data
+    let data = await createRequest();
+    console.log(data);
+
+    // Checking if submission was successful
+    if (data === null) {
+        // Failed
+        document.getElementById('error').innerHTML = "Failed to submit. Try again later."
+    }
+    else {
+        // Success - Moving back to homepage
+        back();
+    }
 }
 
 /**
  * Saves the request to the server to update.
  */
-function save() {
-    validateExistingRequestInputs();
+async function save() {
+    // Checking if changes were made and they're valid
+    let valid = validateExistingRequestInputs();
+
+    // Checking if valid
+    if (!valid) {
+        // Not valid
+        return;
+    }
+
+    // Getting put response data
+    let data = await updateRequest();
+
+    // Checking if save was successful
+    if (data === null) {
+        // Failed
+        document.getElementById('error').innerHTML = "Failed to save. Try again later."
+    }
+    else {
+        // Success - Moving back to homepage
+        back();
+    }
 }
 
 /*
@@ -404,6 +454,14 @@ function validateNewRequestInputs() {
         document.getElementById(`${costElement.id}Error`).innerHTML = `Invalid Amount. Must be between $${costElement.min} and $${costElement.max}`;
     }
 
+    // Checking if cutoff is valid
+    let cutoffElement = document.getElementById('inputCutoff');
+    let result = validateGrade(cutoffElement.value);
+    if (cutoffElement.value !== "" && !result[0]) {
+        success = false;
+        document.getElementById(`${cutoffElement.id}Error`).innerHTML = `Invalid Cutoff. Must be one of [${result[1]}]`;
+    }
+
     return success;
 }
 
@@ -417,7 +475,8 @@ function validateExistingRequestInputs() {
 
     // Checking if manager
     if (managerView) {
-        // Manager - Checking if reim amount was changed
+        // Manager
+        // Checking if reim amount was changed
         let reimAmountElement = document.getElementById('inputReimAmount');
         if (reimAmountElement.value != previousReimAmount) {
             // Reim amount was changed
@@ -443,44 +502,51 @@ function validateExistingRequestInputs() {
         }
     }
     else {
-        // Employee - Checking if grade input was valid (based on grade format)
-        success = validateGrade();
+        // Employee
+        // Checking if grade is valid
+        let gradeElement = document.getElementById('inputGrade');
+        let result = validateGrade(gradeElement.value);
+        if (gradeElement.value !== "" && !result[0]) {
+            success = false;
+            document.getElementById(`${gradeElement.id}Error`).innerHTML = `Invalid Cutoff. Must be one of [${result[1]}]`;
+        }
+        else {
+            document.getElementById(`${gradeElement.id}Error`).innerHTML = '';
+        }
     }
 
     return success;
 }
 
 /**
- * Determiens whether the grade input is valid.
+ * Determiens whether the given grade is valid.
  * Depends on grade format
- * @returns True if the grade input is valid, and false othewise.
+ * @param {The grade to check} grade 
+ * @returns True if the grade input is valid, and false othewise. Also sends back the list of acceptable grades.
  */
-function validateGrade() {
-    // Getting grade related elements
-    let gradeFormatElement = document.getElementById('inputGradeFormat');
-    let gradeElement = document.getElementById('inputGrade');
+function validateGrade(grade) {
+    // Init
+    let valid = false;
+    let acceptable = null;
 
-    // Checking type
-    let accept;
-    if (gradeFormatElement.value === 'LETTER') {
-        // Letter
-        accept = ['A', 'B', 'C', 'D', 'F', ''];
-    }
-    else {
-        // Pass Fail
-        accept = ['P', 'F', ''];
-    }
+    // Getting format
+    let format = document.getElementById('inputGradeFormat').value;
 
-    if (!accept.includes(gradeElement.value)) {
-        // Not a valid letter grade
-        document.getElementById(`${gradeElement.id}Error`).innerHTML = `Invalid Grade. Grade must be one of the following: ${accept}`;
-    }
-    else {
-        document.getElementById(`${gradeElement.id}Error`).innerHTML = '';
-        return true;
+    // Finding format to check against
+    for (gradeFormat of metaData.gradeFormats) {
+        // Checking if format matches
+        if (gradeFormat.first === format) {
+            // Found format
+            acceptable = gradeFormat.second
+            // Checking if format accetable grades includes given grade
+            if (acceptable.includes(grade)) {
+                valid = true;
+            }
+            break;
+        }
     }
 
-    return true;
+    return [valid, acceptable];
 }
 
 /**

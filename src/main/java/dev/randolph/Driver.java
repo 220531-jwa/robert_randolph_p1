@@ -3,6 +3,7 @@ package dev.randolph;
 import static io.javalin.apibuilder.ApiBuilder.get;
 import static io.javalin.apibuilder.ApiBuilder.path;
 import static io.javalin.apibuilder.ApiBuilder.post;
+import static io.javalin.apibuilder.ApiBuilder.put;
 
 import dev.randolph.controller.EmployeeController;
 import dev.randolph.controller.MetaController;
@@ -41,12 +42,13 @@ public class Driver {
                 get(employeeC::getEmployeeByUsername);
             });
             path("/request", () -> {
-//                post(requestC::createNewRequest);
                 get(requestC::getAllRequests);
                 path("/{username}", () -> {
+                    post(requestC::createNewRequest);
                     get(requestC::getAllEmployeeRequests);
                     path("/{rid}", () -> {
                         get(requestC::getEmployeeRequestById);
+                        put(requestC::updateEmployeeRequestById);
                     });
                 });
             });

@@ -21,7 +21,9 @@ public class RequestController {
      */
     
     public void createNewRequest(Context c) {
-        log.debug("Http post request recieved at endpoint");
+        log.debug("Http post request recieved at endpoint /request/{username}");
+        c.result("{\"Success\": \"Yay!\"}");
+        c.status(200);
         // Get employee id
         // Check authorization
     }
@@ -111,7 +113,10 @@ public class RequestController {
      * === PATCH ===
      */
     
-    public void updateEmployeeRequest(Context c) {
+    public void updateEmployeeRequestById(Context c) {
+        log.debug("Http put request recieved at endpoint /request/{username}/{rid}");
+        c.result("{\"Success\": \"Yay!\"}");
+        c.status(200);
         // Get employee id (who is updating)
         // Get request id (request to update)
         // Get optional body params (request fields to update)

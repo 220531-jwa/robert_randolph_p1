@@ -1,10 +1,13 @@
 package dev.randolph.model.DTO;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import dev.randolph.model.enums.EventType;
 import dev.randolph.model.enums.GradeFormatType;
 import dev.randolph.model.enums.RequestStatus;
+import kotlin.Pair;
 
 public class MetaDTO {
     
@@ -12,9 +15,15 @@ public class MetaDTO {
     
     private static RequestStatus[][] statuses = {RequestStatus.getPending(), RequestStatus.getFinished()};
     private static EventType[] events = EventType.values();
-    private static GradeFormatType[] gradeFormats = GradeFormatType.values();
+    private static List<Pair<GradeFormatType, List<String>>> gradeFormats;
     
-    private MetaDTO() {}
+    private MetaDTO() {
+        gradeFormats = new ArrayList<Pair<GradeFormatType,List<String>>>();
+        
+        for (GradeFormatType gradeFormat: GradeFormatType.values()) {
+            gradeFormats.add(new Pair<>(gradeFormat, GradeFormatType.getPossibleGradesFromType(gradeFormat)));
+        }
+    }
     
     public static synchronized MetaDTO getMetaDTO() {
         if (meta == null) {
@@ -27,17 +36,18 @@ public class MetaDTO {
         return statuses;
     }
 
-    public static EventType[] getEvents() {
+    public EventType[] getEvents() {
         return events;
     }
 
-    public GradeFormatType[] getGradeFormats() {
+    public List<Pair<GradeFormatType, List<String>>> getGradeFormats() {
         return gradeFormats;
     }
 
     @Override
     public String toString() {
-        return "MetaDTO [statuses=" + Arrays.toString(statuses) + ", gradeFormats=" + Arrays.toString(gradeFormats)
-                + "]";
+        return "MetaDTO [getStatuses()=" + Arrays.toString(getStatuses()) + ", getEvents()="
+                + Arrays.toString(getEvents()) + ", getGradeFormats()=" + getGradeFormats() + "]";
     }
+    
 }

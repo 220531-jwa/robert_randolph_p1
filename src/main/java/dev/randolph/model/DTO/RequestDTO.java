@@ -52,6 +52,14 @@ public class RequestDTO {
         this.request = request;
     }
 
+    public MetaDTO getMeta() {
+        return meta;
+    }
+
+    public void setMeta(MetaDTO meta) {
+        this.meta = meta;
+    }
+
     @Override
     public String toString() {
         return "RequestDTO [firstName=" + firstName + ", lastName=" + lastName + ", reimFunds=" + reimFunds

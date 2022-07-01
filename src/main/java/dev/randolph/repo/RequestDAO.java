@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -44,7 +45,7 @@ public class RequestDAO {
             
             while (rs.next()) {
                 // Found requests
-                requests.add(createRequestDTO(rs));
+                requests.add(createRequestDTO(rs, false));
             }
         } catch (SQLException e) {
             log.error("Failed to execute query " + sql);
@@ -62,8 +63,8 @@ public class RequestDAO {
      * @return A list of requests if successful, and null otherwise.
      */
     public List<RequestDTO> getAllEmployeeRequests(String username, RequestStatus[] filter) {
-        log.debug("Recieved username: " + username + " filter: " + filter);
-        String sql = "select first_name, last_name, reimbursement_funds, r.*"
+        log.debug("Recieved username: " + username + " filter: " + Arrays.toString(filter));
+        String sql = "select first_name, last_name, r.*"
                 + " from employees, requests r"
                 + " where username = employee_username"
                 + " and username = ?";
@@ -83,7 +84,7 @@ public class RequestDAO {
                 // Found requests
                 requests = new ArrayList<>();
                 do {
-                    requests.add(createRequestDTO(rs));
+                    requests.add(createRequestDTO(rs, false));
                 } while (rs.next());
             }
         } catch (SQLException e) {
@@ -117,7 +118,7 @@ public class RequestDAO {
             
             if (rs.next() ) {
                 // Found requests
-                request = createRequestDTO(rs);
+                request = createRequestDTO(rs, true);
             }
         } catch (SQLException e) {
             log.error("Failed to execute query " + sql);
@@ -219,11 +220,11 @@ public class RequestDAO {
      * @return A RequestDTO
      * @throws SQLException
      */
-    private RequestDTO createRequestDTO(ResultSet rs) throws SQLException {
+    private RequestDTO createRequestDTO(ResultSet rs, boolean reimFunds) throws SQLException {
         RequestDTO req = new RequestDTO(
                 rs.getString("first_name"),
                 rs.getString("last_name"),
-                rs.getDouble("reimbursement_funds"),
+                reimFunds ? rs.getDouble("reimbursement_funds") : 0,
                 createRequest(rs));
         
         return req;
