@@ -24,12 +24,7 @@ public class DataSetup {
     private List<Request> requestTestSet;
     private List<RequestDTO> requestDTOTestSet;
     
-    private DataSetup() {
-        setupEmployeeTestSet();
-        setupEventTestSet();
-        setupGradeFormatTestSet();
-        setupRequestDTOTestSet();
-    }
+    private DataSetup() {}
     
     public static DataSetup getDataSetup() {
         if (dataSetup == null) {
@@ -102,23 +97,28 @@ public class DataSetup {
     // === GETTERS ===
 
     public List<Employee> getEmployeeTestSet() {
-        return new ArrayList<Employee>(employeeTestSet);
+        setupEmployeeTestSet();
+        return employeeTestSet;
     }
 
     public List<Event> getEventTestSet() {
-        return new ArrayList<Event>(eventTestSet);
+        setupEventTestSet();
+        return eventTestSet;
     }
 
     public List<GradeFormat> getGradeFormatTestSet() {
-        return new ArrayList<GradeFormat>(gradeFormatTestSet);
+        setupGradeFormatTestSet();
+        return gradeFormatTestSet;
     }
 
-    public List<Request> getRequestTestSet() {
-        return new ArrayList<Request>(requestTestSet);
-    }
+//    public List<Request> getRequestTestSet() {
+//        setupRequestTestSet();
+//        return requestTestSet;
+//    }
     
     public List<RequestDTO> getRequestDTOTestSet() {
-        return new ArrayList<RequestDTO>(requestDTOTestSet);
+        setupRequestDTOTestSet();
+        return requestDTOTestSet;
     }
     
     // === UTILITY ===

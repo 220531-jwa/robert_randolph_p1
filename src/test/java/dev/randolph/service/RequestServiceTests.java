@@ -103,7 +103,6 @@ public class RequestServiceTests {
         }
         
         // RequestDTO
-        mockReqDTOs = dataSetup.getRequestDTOTestSet();
         when(mockRequestDAO.getAllRequests(null)).thenReturn(getFilteredRequestDTOs(null, null));
         when(mockRequestDAO.getAllRequests(allStatuses)).thenReturn(getFilteredRequestDTOs(null, null));
         when(mockRequestDAO.getAllRequests(pendingStatuses)).thenReturn(getFilteredRequestDTOs(null, "PENDING"));
@@ -158,13 +157,6 @@ public class RequestServiceTests {
         return new Request(null, null, EventType.CERTIFICATION, null, 100.00,
                 null, GradeFormatType.PASSFAIL, null, "P", "just",
                 Timestamp.from(Instant.now().plus(8, ChronoUnit.DAYS)), null, "loc", "desc",
-                null, null, null);
-    }
-    
-    private Request getDefaultValidUpdateReqeust() {
-        return new Request(null, null, null, RequestStatus.PENDING_REVIEW, null,
-                100.00, null, null, null, null,
-                null, null, null, null,
                 null, null, null);
     }
     
@@ -282,7 +274,6 @@ public class RequestServiceTests {
         Pair<List<RequestDTO>, Integer> result = reqService.getAllEmployeeRequests("user", null, token);
         Object[] expected = {null, 404};
         Object[] actual = {result.getFirst(), result.getSecond()};
-        System.out.println(result.getSecond());
         
         assertArrayEquals(expected, actual);
     }
@@ -768,7 +759,7 @@ public class RequestServiceTests {
     
     @Test
     public void ur_employeeChangedGrade_invalidGrade_400false() {
-        Request reqData = getDefaultValidUpdateReqeust();
+        Request reqData = new Request();
         reqData.setGrade("A");
         String token = ActiveEmployeeSessions.addActiveEmployee("user1");
         Pair<Boolean, Integer> result = reqService.updateRequest("user1", 3, reqData, token);
@@ -781,7 +772,7 @@ public class RequestServiceTests {
     @Test
     public void ur_employeeChangedGrade_validGrade_changedToP_200true() {
         // Setting up mock
-        Request reqData = getDefaultValidUpdateReqeust();
+        Request reqData = new Request();
         reqData.setGrade("P");
         Request request = null;
         // Finding request that will change
@@ -813,10 +804,44 @@ public class RequestServiceTests {
     }
     
     @Test
+    public void ur_employeeChangedGrade_validGrade_statusWasPendingGrade_200true() {
+        // Setting up mock
+        Request reqData = new Request();
+        reqData.setGrade("P");
+        Request request = null;
+        // Finding request that will change
+        for (RequestDTO reqDTO: mockReqDTOs) {
+            request = reqDTO.getRequest();
+            if (request.getEmployeeUsername().equals("user1") && request.getId() == 3) {
+                break;
+            }
+        }
+        request.setStatus(RequestStatus.PENDING_GRADE); // Setting initial request to pending_grade for test
+        when(mockRequestDAO.updateRequest(request)).thenReturn(true);
+        
+        // Testing
+        String token = ActiveEmployeeSessions.addActiveEmployee("user1");
+        Pair<Boolean, Integer> result = reqService.updateRequest(request.getEmployeeUsername(), request.getId(), reqData, token);
+        Object[] expected = {
+                // Service Return
+                true, 200,
+                // Changed values
+                reqData.getGrade(), RequestStatus.PENDING_APPROVAL
+                };
+        Object[] actual = {
+                // Service Return
+                result.getFirst(), result.getSecond(),
+                // changed values
+                request.getGrade(), request.getStatus()
+                };
+        
+        assertArrayEquals(expected, actual);
+    }
+    
+    @Test
     public void ur_employeeChangedGrade_validGrade_changedToNull_200true() {
         // Setting up mock
-        Request reqData = getDefaultValidUpdateReqeust();
-        reqData.setStatus(RequestStatus.PENDING_APPROVAL);  // Syncing with request
+        Request reqData = new Request();
         Request request = null;
         // Finding request that will change
         for (RequestDTO reqDTO: mockReqDTOs) {
@@ -849,7 +874,7 @@ public class RequestServiceTests {
     @ParameterizedTest
     @EnumSource(value = RequestStatus.class, names = {"PENDING_GRADE", "PENDING_APPROVAL", "APPROVED", "REJECTED"})
     public void ur_employeeChangedStatus_invalidStatus_403false(RequestStatus status) {
-        Request reqData = getDefaultValidUpdateReqeust();
+        Request reqData = new Request();
         reqData.setStatus(status);
         String token = ActiveEmployeeSessions.addActiveEmployee("user1");
         Pair<Boolean, Integer> result = reqService.updateRequest("user1", 3, reqData, token);
@@ -862,7 +887,7 @@ public class RequestServiceTests {
     @Test
     public void ur_employeeChangedStatus_nullStatus_200true() {
         // Setting up mock
-        Request reqData = getDefaultValidUpdateReqeust();
+        Request reqData = new Request();
         reqData.setStatus(null);
         Request request = null;
         // Finding request that will change
@@ -886,7 +911,7 @@ public class RequestServiceTests {
     @Test
     public void ur_employeeChangedStatus_validStatusIsCanceled_200true() {
         // Setting up mock
-        Request reqData = getDefaultValidUpdateReqeust();
+        Request reqData = new Request();
         reqData.setStatus(RequestStatus.CANCELLED);
         Request request = null;
         // Finding request that will change
@@ -920,7 +945,7 @@ public class RequestServiceTests {
     @ParameterizedTest
     @ValueSource(doubles = {-1.00, 10000.00})
     public void ur_managerChangedRiemAmount_invalidRange_400false(Double reimAmount) {
-        Request reqData = getDefaultValidUpdateReqeust();
+        Request reqData = new Request();
         reqData.setReimAmount(reimAmount);
         String token = ActiveEmployeeSessions.addActiveEmployee("admin1");
         Pair<Boolean, Integer> result = reqService.updateRequest("user1", 3, reqData, token);
@@ -932,7 +957,7 @@ public class RequestServiceTests {
     
     @Test
     public void ur_managerChangedRiemAmount_reasonNotProvided_400false() {
-        Request reqData = getDefaultValidUpdateReqeust();
+        Request reqData = new Request();
         reqData.setReimAmount(50.00);
         String token = ActiveEmployeeSessions.addActiveEmployee("admin1");
         Pair<Boolean, Integer> result = reqService.updateRequest("user1", 3, reqData, token);
@@ -945,7 +970,7 @@ public class RequestServiceTests {
     @Test
     public void ur_managerChangedRiemAmount_validReimAmountValidReason_200true() {
         // Setting up mock
-        Request reqData = getDefaultValidUpdateReqeust();
+        Request reqData = new Request();
         reqData.setReimAmount(50.00);
         reqData.setReason("Halved Because I can");
         Request request = null;
@@ -980,7 +1005,7 @@ public class RequestServiceTests {
     @Test
     public void ur_managerChangedRiemAmount_validReimAmountNullValue_200true() {
         // Setting up mock
-        Request reqData = getDefaultValidUpdateReqeust();
+        Request reqData = new Request();
         reqData.setReimAmount(null);
         Request request = null;
         // Finding request that will change
@@ -1004,7 +1029,7 @@ public class RequestServiceTests {
     @Test
     public void ur_managerChangedReason_200true() {
         // Setting up mock
-        Request reqData = getDefaultValidUpdateReqeust();
+        Request reqData = new Request();
         reqData.setReason("Random Reason");
         Request request = null;
         // Finding request that will change
@@ -1037,7 +1062,7 @@ public class RequestServiceTests {
     
     @Test
     public void ur_managerChangedStatus_invalidStatus_cannotApproveOwnRequest_400false() {
-        Request reqData = getDefaultValidUpdateReqeust();
+        Request reqData = new Request();
         reqData.setGrade("B");  // syncing with data set
         reqData.setStatus(RequestStatus.APPROVED);
         String token = ActiveEmployeeSessions.addActiveEmployee("admin1");
@@ -1050,7 +1075,7 @@ public class RequestServiceTests {
     
     @Test
     public void ur_managerChangedStatus_nullStatus_200true() {
-        Request reqData = getDefaultValidUpdateReqeust();
+        Request reqData = new Request();
         reqData.setStatus(null);
         String token = ActiveEmployeeSessions.addActiveEmployee("admin1");
         Pair<Boolean, Integer> result = reqService.updateRequest("user1", 3, reqData, token);
@@ -1064,7 +1089,7 @@ public class RequestServiceTests {
     @EnumSource(value =  RequestStatus.class, names = {"PENDING_REVIEW", "PENDING_GRADE", "PENDING_APPROVAL", "REJECTED", "CANCELLED"})
     public void ur_managerChangedStatus_validStatusNotApproved_200true(RequestStatus status) {
         // Setting up mock
-        Request reqData = getDefaultValidUpdateReqeust();
+        Request reqData = new Request();
         reqData.setStatus(status);
         Request request = null;
         // Finding request that will change
@@ -1074,13 +1099,11 @@ public class RequestServiceTests {
                 break;
             }
         }
-        System.out.println(request);
         when(mockRequestDAO.updateRequest(request)).thenReturn(true);
         
         // Testing
         String token = ActiveEmployeeSessions.addActiveEmployee("admin1");
         Pair<Boolean, Integer> result = reqService.updateRequest(request.getEmployeeUsername(), request.getId(), reqData, token);
-        System.out.println(request);
         Object[] expected = {
                 // Service Return
                 true, 200,
@@ -1097,21 +1120,53 @@ public class RequestServiceTests {
         assertArrayEquals(expected, actual);
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    @Test
+    public void ur_managerChangedStatus_toApproved_200true() {
+        // Setting up mock
+        Request reqData = new Request();
+        reqData.setStatus(RequestStatus.APPROVED);
+        Request changedRequest = null;
+        Employee changedEmp = null;
+        Double expectedFunds = null;
+        Double expectedReimAmount = null;
+        // Finding request that will change
+        for (RequestDTO reqDTO: mockReqDTOs) {
+            changedRequest = reqDTO.getRequest();
+            if (changedRequest.getEmployeeUsername().equals("user1") && changedRequest.getId() == 3) {
+                break;
+            }
+        }
+        // Finding employee associated with request that will change
+        for (Employee emp: mockEmps) {
+            changedEmp = emp;
+            if (changedEmp.getUsername().equals(changedRequest.getEmployeeUsername())) {
+                expectedFunds = emp.getFunds() + changedRequest.getReimAmount();
+                expectedReimAmount = emp.getReimFunds() - changedRequest.getReimAmount();
+                if (expectedReimAmount < 0) {expectedReimAmount = 0.00;}
+                break;
+            }
+        }
+        when(mockEmpDAO.updateEmployeeFunds(changedEmp)).thenReturn(true);
+        when(mockRequestDAO.updateRequest(changedRequest)).thenReturn(true);
+        
+        // Testing
+        String token = ActiveEmployeeSessions.addActiveEmployee("admin1");
+        Pair<Boolean, Integer> result = reqService.updateRequest(changedRequest.getEmployeeUsername(), changedRequest.getId(), reqData, token);
+        Object[] expected = {
+                // Service Return
+                true, 200,
+                // Changed values
+                reqData.getStatus(),                // Request
+                expectedFunds, expectedReimAmount   // Employee
+                };
+        Object[] actual = {
+                // Service Return
+                result.getFirst(), result.getSecond(),
+                // changed values
+                changedRequest.getStatus(),                                // Request
+                changedEmp.getFunds(), changedEmp.getReimFunds()    // Employee
+                };
+        
+        assertArrayEquals(expected, actual);
+    }
 }

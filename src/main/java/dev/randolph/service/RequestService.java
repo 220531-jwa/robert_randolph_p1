@@ -511,29 +511,27 @@ public class RequestService {
                 // Checking if status was set to approved
                 if (reqData.getStatus() == RequestStatus.APPROVED) {
                     log.info("Request was approved: Sending funds to employee who owned the request");
-                    Employee emp = empDAO.getEmployeeByUsername(requesterUsername);
+                    Employee emp = empDAO.getEmployeeByUsername(username);
+                    
+                    // Checking if employee exists
                     if (emp == null) {
-                        log.error("Failed to send funds: Employee doesn't exist: Cancelling request.");
-                        request.setStatus(RequestStatus.CANCELLED);
-                        // Moving on -> request is still being updated
+                        log.error("Failed to send funds: Employee doesn't exist: Cancelling request."); // Shouldn't happen, since only existing employees can create their own requests
+                        return new Pair<>(false, 404);
                     }
-                    else {
-                        // Sending funds
-                        emp.setFunds(emp.getFunds() + request.getReimAmount());
-                        boolean r = empDAO.updateEmployeeFunds(emp);
-                        // Checking if failed - Service unavailable
-                        if (!r) {
-                            log.error("Failed to send funds: Possible: DB - failed???");
-                            return new Pair<>(false, 503);   // Something horribly wrong happened.
-                        }
-                        // Successfully added funds
+                    
+                    // Employee exists - Updating employee funds
+                    Double updatedReimAmount = emp.getReimFunds() - request.getReimAmount();
+                    if (updatedReimAmount < 0) {updatedReimAmount = 0.00;}
+                    emp.setFunds(requesterEmp.getFunds() + request.getReimAmount());   // Adding reim amount
+                    emp.setReimFunds(updatedReimAmount);                               // Removing amount form available funds.
+                    boolean r = empDAO.updateEmployeeFunds(emp);
+                    // Checking if failed - Service requesterEmp
+                    if (!r) {
+                        log.error("Failed to send funds: Possible: DB - failed???");
+                        return new Pair<>(false, 503);   // Something horribly wrong happened.
                     }
                 }
-                // Status is already valid
-                if (request.getStatus() != RequestStatus.CANCELLED) {
-                    // Request wasn't cancelled due to employee no longer existing even though the request does.
-                    request.setStatus(reqData.getStatus());
-                }
+                request.setStatus(reqData.getStatus());  // Updating status
             }
         }
         
