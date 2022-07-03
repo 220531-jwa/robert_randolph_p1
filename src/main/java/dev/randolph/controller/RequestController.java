@@ -142,7 +142,7 @@ public class RequestController {
      * @return 200 with update request, 400 series error otherwise.
      */
     public void updateEmployeeRequestById(Context c) {
-        log.debug("Http put request recieved at endpoint /request/{username}/{rid}");
+        log.debug("Http patch request recieved at endpoint /request/{username}/{rid}");
         // Getting input
         String username = c.pathParam("username");
         Validator<Integer> vrid = c.pathParamAsClass("rid", Integer.class);

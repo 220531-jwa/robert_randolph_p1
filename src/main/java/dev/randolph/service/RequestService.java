@@ -435,17 +435,19 @@ public class RequestService {
         // Also checks if manager is editing their own request
         //  - If so, they're considered as an Employee
         boolean changed = false;
+        boolean automatedStatusChange = false;
         if (requesterEmp.getType() == EmployeeType.EMPLOYEE || requesterUsername.equals(username)) {
             // === EMPLOYEE ===
             // === GRADE ===
             // Checking if grade was changed - Interprets null as removing grade
-            if ((reqData.getGrade() != null && !reqData.getGrade().equals(request.getGrade())) ||
-                (request.getGrade() != null && !request.getGrade().equals(reqData.getGrade()))) {
+            if (reqData.getGrade() == null && request.getGrade() == null) {} // move on
+            else if ((reqData.getGrade() != null && !reqData.getGrade().equals(request.getGrade())) ||
+                     (request.getGrade() != null && !request.getGrade().equals(reqData.getGrade()))) {
                 // Grade was changed
                 changed = true;
                 // Validating whether grade follows grade format
                 // Grade can be null - for no grade
-                if (reqData.getGrade() != null && !GradeFormatType.validateGrade(request.getGradeFormat(), reqData.getGrade())) {
+                if (reqData.getGrade() != null && !reqData.getGrade().isBlank() && !GradeFormatType.validateGrade(request.getGradeFormat(), reqData.getGrade())) {
                     log.error("Employee: Grade is invalid or doesn't match grade format");
                     return new Pair<>(false, 400);
                 }
@@ -453,8 +455,9 @@ public class RequestService {
                 request.setGrade(reqData.getGrade());
                 
                 // Checking if status was PENDING_GRADE - automation
-                if (request.getStatus() == RequestStatus.PENDING_GRADE) {
+                if (request.getStatus() == RequestStatus.PENDING_GRADE && request.getGrade() != null && !request.getGrade().isBlank()) {
                     // Automatically setting to PENDING_APPROVAL
+                    automatedStatusChange = true;
                     request.setStatus(RequestStatus.PENDING_APPROVAL);
                 }
             }
@@ -465,12 +468,16 @@ public class RequestService {
                 // Status was changed
                 changed = true;
                 // Validating whether status is cancelled or not
-                if (reqData.getStatus() == null || reqData.getStatus() != RequestStatus.CANCELLED) {
+                if (reqData.getStatus() == RequestStatus.CANCELLED) {
+                    // Status is valid - setting to cancelled (takes precedence over grade automation)
+                    request.setStatus(reqData.getStatus());
+                }
+                else if (!automatedStatusChange) {
+                    // Status was invalid (No automation)
                     log.error("Employee: user isn't authorized to change status to something other then cancelled");
                     return new Pair<>(false, 403);
                 }
-                // Status is valid
-                request.setStatus(reqData.getStatus());
+                
             }
         }
         else {
@@ -481,7 +488,7 @@ public class RequestService {
                 // Reimbursement amount was changed
                 changed = true;
                 // Validating amount is within range
-                if (reqData.getReimAmount() < 0 || reqData.getReimAmount() > 999.99) {
+                if (reqData.getReimAmount() < 0 || reqData.getReimAmount() > 9999.99) {
                     log.error("Manager: reimbursement amount is invalid or isn't within range.");
                     return new Pair<>(false, 400);
                 }

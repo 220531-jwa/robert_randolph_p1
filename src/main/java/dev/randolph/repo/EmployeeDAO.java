@@ -63,14 +63,15 @@ public class EmployeeDAO {
     public boolean updateEmployeeFunds(Employee emp) {
         log.debug("Recieved emp: " + emp);
         String sql = "update employees"
-                + " set funds = ?"
+                + " set (funds, reimbursement_funds) = (?, ?)"
                 + " where username = ?";
         
         // Attempting to execute query
         try (Connection conn = cu.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setDouble(1, emp.getFunds());
-            ps.setString(2, emp.getUsername());
+            ps.setDouble(2, emp.getReimFunds());
+            ps.setString(3, emp.getUsername());
             int changes = ps.executeUpdate();
             
             if (changes != 0) {

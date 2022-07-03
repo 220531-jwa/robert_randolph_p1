@@ -34,7 +34,7 @@ public class RequestDAO {
      */
     public boolean createRequest(Request reqData) {
         log.debug("Recieved reqData: " + reqData);
-        String sql = "insert into requsts"
+        String sql = "insert into requests"
                 + " (id, employee_username, event_type,"
                 + "status, request_cost, reimbursement_amount, grade_format,"
                 + "cutoff, justification, submission_date, start_date,"

@@ -46,14 +46,17 @@ function initializePage() {
  */
 async function updateNewRequest() {
     // Getting meta information
-    metaData = await getMetaData(); // Global for input validation
+    let result = await getMetaData(); // Global for input validation
 
     // Checking if successful
-    if (metaData === null) {
+    if (result[0] !== 200) {
         // Failed to fetch
         notFound();
         return;
     }
+
+    // Getting meta data
+    metaData = result[1];
 
     // === UPDATEING LISTENERS ===
 
@@ -106,15 +109,17 @@ async function updateNewRequest() {
  */
 async function updateExistingRequest() {
     // Getting request data
-    let requestData = await getRequest();
-    console.log('request data');
-    console.log(requestData);
+    let result = await getRequest();
+    console.log('request result');
+    console.log(result);
 
     // Checking if sucessful
-    if (requestData === null) {
+    if (result[0] !== 200) {
         notFound();
         return;
     }
+
+    let requestData = result[1];
     
     let request = requestData.request;
     metaData = requestData.meta;    // Global for input verification
@@ -379,15 +384,20 @@ async function submit() {
     // Checking if valid
     if (!valid) {
         // Not valid
+        document.getElementById('error').innerHTML = 'Need to fill specified required fields';
         return;
+    }
+    else {
+        document.getElementById('error').innerHTML = '';
     }
 
     // Getting post response data
-    let data = await createRequest();
-    console.log(data);
+    let result = await createRequest();
+    console.log('Got result:');
+    console.log(result);
 
     // Checking if submission was successful
-    if (data === null) {
+    if (result[0] !== 201) {
         // Failed
         document.getElementById('error').innerHTML = "Failed to submit. Try again later."
     }
@@ -411,10 +421,12 @@ async function save() {
     }
 
     // Getting put response data
-    let data = await updateRequest();
+    let result = await updateRequest();
+    console.log("got result");
+    console.log(result);
 
     // Checking if save was successful
-    if (data === null) {
+    if (result[0] !== 200) {
         // Failed
         document.getElementById('error').innerHTML = "Failed to save. Try again later."
     }

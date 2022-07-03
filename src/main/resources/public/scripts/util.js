@@ -6,7 +6,7 @@
  * Fetches a get request at a given url.
  * If the user isn't in an active session, redirects them to the login page.
  * @param {The url to send the request to} url
- * @returns The body data as JSON if successful, and null otherwise.
+ * @returns The response status with the body data as JSON if successful, and null otherwise.
  */
 async function fetchGetRequest(reqUrl) {
     // Getting userdata
@@ -22,17 +22,16 @@ async function fetchGetRequest(reqUrl) {
     });
 
     // Processing response
-    if (response.status === 200) {
-        let data = await response.json();
-        return data;
+    let data = null;
+    if (response.ok) {
+        data = await response.json();
     }
     else if (response.status === 401) {
         // Not in active session
         notInActiveSession();
     }
-    else {
-        return null;
-    }
+
+    return [response.status, data];
 }
 
 /**
@@ -40,7 +39,7 @@ async function fetchGetRequest(reqUrl) {
  * If the user isn't in an active session, redirects them to the login page.
  * @param {The url to send the request to} reqUrl 
  * @param {The body of the request} reqBody 
- * @returns The body data as JSON if successful, and null otherwise.
+ * @returns The response status with the body data as JSON if successful, and null otherwise.
  */
 async function fetchPostRequest(reqUrl, reqBody) {
     // Getting userdata
@@ -57,17 +56,16 @@ async function fetchPostRequest(reqUrl, reqBody) {
     });
 
     // Processing response
-    if (response.status === 200) {
-        let data = await response.json();
-        return data;
+    let data = null;
+    if (response.ok) {
+        data = await response.json();
     }
     else if (response.status === 401) {
         // Not in active session
         notInActiveSession();
     }
-    else {
-        return null;
-    }
+
+    return [response.status, data];
 }
 
 /**
@@ -75,7 +73,7 @@ async function fetchPostRequest(reqUrl, reqBody) {
  * If the user isn't in an active sesion, redirects them to the login page.
  * @param {The url to send the request to} reqUrl 
  * @param {The body of the request} reqBody 
- * @returns The body data as JSON if successful, and null otherwise
+ * @returns The response status with the body data as JSON if successful, and null otherwise
  */
 async function fetchPatchRequest(reqUrl, reqBody) {
     // Getting userdata
@@ -92,17 +90,16 @@ async function fetchPatchRequest(reqUrl, reqBody) {
     });
 
     // Processing response
-    if (response.status === 200) {
-        let data = await response.json();
-        return data;
+    let data = null;
+    if (response.ok) {
+        data = await response.json();
     }
     else if (response.status === 401) {
         // Not in active session
         notInActiveSession();
     }
-    else {
-        return null;
-    }
+    
+    return [response.status, data];
 }
 
 /*
@@ -136,7 +133,7 @@ function notInActiveSession() {
     sessionStorage.clear();
 
     // Moving to login page
-    // location.href = "../html/loginPage.html";
+    location.href = "../html/loginPage.html";
 }
 
 /**

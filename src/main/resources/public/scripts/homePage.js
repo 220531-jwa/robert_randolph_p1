@@ -35,18 +35,21 @@ function initializePage() {
  */
 async function updateEmployeeInformation() {
     // Getting up to date employee information
-    let userData = await getEmployeeData();
+    let result = await getEmployeeData();
 
     // Checking if fetch was successful
-    if (userData === null) {
+    if (result[0] !== 200) {
         // Failed
         return;
     }
 
+    // Getting user data
+    let userData = result[1];
+
     // Updating page with user information
     document.getElementById("welcome").innerHTML = `Welcome: ${userData.firstName} ${userData.lastName}`;
-    document.getElementById("reimFunds").innerHTML = `$${userData.reimFunds}`;
-    document.getElementById("funds").innerHTML = `$${userData.funds}`;
+    document.getElementById("reimFunds").innerHTML = `$${userData.reimFunds.toFixed(2)}`;
+    document.getElementById("funds").innerHTML = `$${userData.funds.toFixed(2)}`;
 
     // Checking if employee is manager -> unlocks manage requests nav button
     if (userData.type === 'MANAGER') {
@@ -71,15 +74,16 @@ async function updateRequestInformation() {
     }
 
     // Getting up to date request information
-    let requestData = await getReimbursementRequests();
-    console.log('request data');
-    console.log(requestData);
+    let result = await getReimbursementRequests();
 
     // Checking if fetch was succesful
-    if (requestData === null) {
+    if (result[0] !== 200) {
         // Failed
         return;
     }
+
+    // Getting request data
+    let requestData = result[1];
 
     // Populating table
     for (req of requestData) {
@@ -208,16 +212,16 @@ function seeRequest(username, rid) {
  */
 function createTableRow(requestData) {
     // Seperating data
-    let username = requestData.username;
     let firstName = requestData.firstName;
     let lastName = requestData.lastName;
     let request = requestData.request;
+    let username = request.employeeUsername;
     let id = request.id;
     let values;
 
     if (managerView) {
         values = [`${firstName} ${lastName}`, request.eventType, `$${request.cost.toFixed(2)}`,
-            `$${request.reimAmount.toFixed(2)}`, request.status, request.urgent, request.grade,
+            `$${request.reimAmount.toFixed(2)}`, request.status, request.isUrgent, request.grade,
             request.cutoff, request.justification, getDateTimeFromTimestamp(request.startDate)];
     }
     else {
@@ -230,7 +234,7 @@ function createTableRow(requestData) {
     let tr = document.createElement('tr');
     tr.id = `request_${id}`
 
-    // Adding link
+    // Setting link Flag
     let i;
     if (managerView) {
         i = 0;
@@ -239,10 +243,12 @@ function createTableRow(requestData) {
         i = 1;
     }
 
+    // Populating record row
     for (val of values) {
-        let td = document.createElement('td');
+        let td = document.createElement('td');  // Creating cell
 
         if (i == 1) {
+            // Adding linked event type
             let a = document.createElement('a');
             a.setAttribute('href', '#');
             a.addEventListener('click', () => seeRequest(username, id));
@@ -250,9 +256,11 @@ function createTableRow(requestData) {
             td.append(a);
         }
         else {
+            // Adding normal val
             td.innerHTML = val;
         }
-        
+       
+        // Adding cell tor row
         tr.append(td);
         i++;
     }
