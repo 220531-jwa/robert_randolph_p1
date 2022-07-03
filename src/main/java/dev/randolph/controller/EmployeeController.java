@@ -4,13 +4,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import dev.randolph.model.Employee;
+import dev.randolph.repo.EmployeeDAO;
 import dev.randolph.service.EmployeeService;
 import io.javalin.http.Context;
 import kotlin.Pair;
 
 public class EmployeeController {
     
-    private EmployeeService empService = new EmployeeService();
+    private EmployeeService empService = new EmployeeService(new EmployeeDAO());
     private static Logger log = LogManager.getLogger(EmployeeController.class);
     
     /*

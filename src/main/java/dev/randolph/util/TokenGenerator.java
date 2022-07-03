@@ -28,6 +28,7 @@ public class TokenGenerator {
         } while (usedTokens.contains(token));
         
         log.debug("Generated token: " + token);
+        usedTokens.add(token);
         return token;
     }
     

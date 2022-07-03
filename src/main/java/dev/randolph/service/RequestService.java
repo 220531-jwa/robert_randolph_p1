@@ -25,14 +25,25 @@ import kotlin.Pair;
 
 public class RequestService {
     
-    private EmployeeDAO empDAO  = new EmployeeDAO();
-    private RequestDAO reqDAO = new RequestDAO();
+    private EmployeeDAO empDAO;;
+    private RequestDAO reqDAO;
     private static Logger log = LogManager.getLogger(RequestService.class);
     
     /*
      * === POST / CREATE
      */
     
+    public RequestService() {
+        empDAO  = new EmployeeDAO();
+        reqDAO = new RequestDAO();
+    }
+    
+    public RequestService(EmployeeDAO empDAO, RequestDAO reqDAO) {
+        super();
+        this.empDAO = empDAO;
+        this.reqDAO = reqDAO;
+    }
+
     /**
      * Creates a new request for the given username.
      * Inputs must be valid and exist.
@@ -76,7 +87,7 @@ public class RequestService {
         
         // Validating if request fields are valid
         if (reqData.getCost() < 0 || reqData.getCost() > 9999.99
-            || validateGrade(reqData.getGradeFormat(), reqData.getCutoff())
+            || !GradeFormatType.validateGrade(reqData.getGradeFormat(), reqData.getCutoff())
             || reqData.getEventDescription().isBlank()
             || reqData.getEventLocation().isBlank()
             || reqData.getJustification().isBlank()) {
@@ -92,7 +103,7 @@ public class RequestService {
         
         // Checking is user is authorized to create request
         String requesterUsername = ActiveEmployeeSessions.getActiveEmployeeUsername(token);
-        if (requesterUsername.equals(username)) {
+        if (!requesterUsername.equals(username)) {
             log.error("User isn't authorized to make a new request for the given username");
             return new Pair<>(false, 403);
         }
@@ -100,15 +111,15 @@ public class RequestService {
         // Getting employee
         Employee emp = empDAO.getEmployeeByUsername(requesterUsername);
         if (emp == null) {
-            log.error("Username doens't exist");
+            log.error("Username doens't exist");    // Shouldn't ever happen (Since only existing employees can be active users)
             return new Pair<>(false, 404);
         }
         
-        // ===============================
-        // === Populating request data ===
-        // ===============================
+        // ==========================================
+        // === Populating calculated request data ===
+        // ==========================================
         
-        // Calculating values to populate remaining request fields.
+        // Getting meta data to calculate values to populate remaining request fields.
         MetaData metaData = MetaData.getMeta();
         
         // Calculating reimbursement amount
@@ -118,12 +129,13 @@ public class RequestService {
             if (event.getType() == reqData.getEventType()) {
                 // Found matching 
                 reimAmount = reqData.getCost() * event.getReimPercent();
-                reimAmount = (double) (Math.round(reimAmount * 100) / 100); // Rounding
+                reimAmount = ((double) Math.round(reimAmount * 100)) / 100; // Rounding
+                break;
             }
         }
         if (reimAmount == null) {
-            log.error("Event Type wasn't found in database");
-            return new Pair<>(false, 404);
+            log.error("Event Type wasn't found in database");   // Shouldn't happen
+            return new Pair<>(false, 503);
         }
         
         // Calculating submission date
@@ -162,8 +174,8 @@ public class RequestService {
         boolean result = reqDAO.createRequest(reqData);
         int status = 201;
         if (!result) {
-            log.error("Failed to create request. Possible: Couldn't find gradeFormat/event to reference.");
-            status = 404;
+            log.error("Failed to create request. Possible: Couldn't find gradeFormat/event to reference."); // Shouldn't happen
+            status = 503;
         }
         
         return new Pair<>(result, status);
@@ -199,13 +211,21 @@ public class RequestService {
         // Checking if user is authorized to request all reimbursement requests
         String requesterUsername = ActiveEmployeeSessions.getActiveEmployeeUsername(token);
         Employee emp = empDAO.getEmployeeByUsername(requesterUsername);
+        
+        // Checking if employee exists - Shouldn't ever happen (Since only existing employees can be active users)
+        if (emp == null) {
+            log.error("Failed to get active user. Possible: Db failed???");
+            return new Pair<>(null, 503);
+        }
+        
+        // Checking if user is a manager
         if (emp.getType() != EmployeeType.MANAGER) {
             log.error("User isn't authorized to know about all reimbursement requests");
             return new Pair<>(null, 403);
         }
         
         // Getting status filter - Default is all
-        RequestStatus[] filter = getFilters(statusFilter);
+        RequestStatus[] filter = RequestStatus.getFilters(statusFilter);
         
         // Getting requests
         List<RequestDTO> requests = reqDAO.getAllRequests(filter);        
@@ -240,6 +260,14 @@ public class RequestService {
         // Checking if user is authorized to request employee reimbursement requests
         String requesterUsername = ActiveEmployeeSessions.getActiveEmployeeUsername(token);
         Employee emp = empDAO.getEmployeeByUsername(requesterUsername);
+        
+        // Checking if employee exists - Shouldn't ever happen (Since only existing employees can be active users)
+        if (emp == null) {
+            log.error("Failed to get active user. Possible: Db failed???");
+            return new Pair<>(null, 503);
+        }
+        
+        // Checking if user is requesting their own information, or manager
         if (emp.getType() == EmployeeType.EMPLOYEE && emp.getUsername().equals(username)) {}    // Employee is getting their own requests
         else if (emp.getType() == EmployeeType.MANAGER) {}                                      // Manager is getting requests
         else {
@@ -248,13 +276,14 @@ public class RequestService {
         }
         
         // Getting status filter - Default is all
-        RequestStatus[] filter = getFilters(statusFilter);
+        RequestStatus[] filter = RequestStatus.getFilters(statusFilter);
         
         // Getting requests - Possible for requests to be empty
         List<RequestDTO> requests = reqDAO.getAllEmployeeRequests(username, filter);
         int status = 200;
-        if (requests == null) {
+        if (requests == null || requests.isEmpty()) {
             log.error("Target employee doesn't exist");
+            requests = null;
             status = 404;
         }
         
@@ -288,6 +317,14 @@ public class RequestService {
         // Checking if user is authorized to request employee reimbursement requests
         String requesterUsername = ActiveEmployeeSessions.getActiveEmployeeUsername(token);
         Employee emp = empDAO.getEmployeeByUsername(requesterUsername);
+        
+        // Checking if employee exists - Shouldn't ever happen (Since only existing employees can be active users)
+        if (emp == null) {
+            log.error("Failed to get active user. Possible: Db failed???");
+            return new Pair<>(null, 503);
+        }
+        
+        // Checking if user is requesting their own request, or is a manager.
         if (emp.getType() == EmployeeType.EMPLOYEE && emp.getUsername().equals(username)) {/*Does Nothing*/}    // Employee is getting their own request
         else if (emp.getType() == EmployeeType.MANAGER) {/*Does Nothing*/}                                      // Manager is getting request
         else {
@@ -296,7 +333,7 @@ public class RequestService {
         }
         
         // Getting request
-        RequestDTO request = reqDAO.getAllEmployeeRequestById(requesterUsername, rid);
+        RequestDTO request = reqDAO.getEmployeeRequestById(username, rid);
         int status = 200;
         if (request == null) {
             log.error("Target employee and/or request id doesn't exist");
@@ -358,6 +395,14 @@ public class RequestService {
         // Checking is user is authorized to update the request
         String requesterUsername = ActiveEmployeeSessions.getActiveEmployeeUsername(token);
         Employee requesterEmp = empDAO.getEmployeeByUsername(requesterUsername);
+        
+        // Checking if employee exists - Shouldn't ever happen (Since only existing employees can be active users)
+        if (requesterEmp == null) {
+            log.error("Failed to get active user. Possible: Db failed???");
+            return new Pair<>(false, 503);
+        }
+        
+        // Checking if employee is updating their own request, or a manager is.
         if (requesterEmp.getType() == EmployeeType.EMPLOYEE && requesterEmp.getUsername().equals(username)) {}  // Employee is updating their own request
         else if (requesterEmp.getType() == EmployeeType.MANAGER) {}                                             // Manager is updating employee request
         else {
@@ -366,15 +411,16 @@ public class RequestService {
         }
         
         // Getting request to update
-        Request request = reqDAO.getAllEmployeeRequestById(requesterUsername, rid).getRequest();
+        RequestDTO reqDTO = reqDAO.getEmployeeRequestById(username, rid);
         
         // Checking if request exists
-        if (request == null) {
+        if (reqDTO == null) {
             log.error("request doesn't exist");
             return new Pair<>(false, 404);
         }
+        Request request = reqDTO.getRequest();
         
-        // Checking if user is authorized to update a finished request. (Nobody is)
+        // Checking if user is authorized to update a finished request. (Nobody is -> Make admin role)
         ArrayList<RequestStatus> statuses = new ArrayList<RequestStatus>(Arrays.asList(RequestStatus.getFinished()));
         if (statuses.contains(request.getStatus())) {
             log.error("User isn't authorized to update a finished request");
@@ -386,17 +432,20 @@ public class RequestService {
         // ==========================================
         
         // Checking if required reqData was provided (Depends on employee type)
+        // Also checks if manager is editing their own request
+        //  - If so, they're considered as an Employee
         boolean changed = false;
-        if (requesterEmp.getType() == EmployeeType.EMPLOYEE) {
+        if (requesterEmp.getType() == EmployeeType.EMPLOYEE || requesterUsername.equals(username)) {
             // === EMPLOYEE ===
             // === GRADE ===
-            // Checking if grade was changed
-            if (reqData.getGrade() != request.getGrade()) {
+            // Checking if grade was changed - Interprets null as removing grade
+            if ((reqData.getGrade() != null && !reqData.getGrade().equals(request.getGrade())) ||
+                (request.getGrade() != null && !request.getGrade().equals(reqData.getGrade()))) {
                 // Grade was changed
                 changed = true;
                 // Validating whether grade follows grade format
                 // Grade can be null - for no grade
-                if (reqData.getGrade() != null || validateGrade(request.getGradeFormat(), reqData.getGrade())) {
+                if (reqData.getGrade() != null && !GradeFormatType.validateGrade(request.getGradeFormat(), reqData.getGrade())) {
                     log.error("Employee: Grade is invalid or doesn't match grade format");
                     return new Pair<>(false, 400);
                 }
@@ -411,8 +460,8 @@ public class RequestService {
             }
             
             // === STATUS ===
-            // Checking if status was changed
-            if (reqData.getStatus() != request.getStatus()) {
+            // Checking if status was changed - ignores null
+            if (reqData.getStatus() != null && reqData.getStatus() != request.getStatus()) {
                 // Status was changed
                 changed = true;
                 // Validating whether status is cancelled or not
@@ -427,13 +476,13 @@ public class RequestService {
         else {
             // === MANAGER ===
             // === REIUMBRSEMENT AMOUNT ===
-            // Checking if reimbursement amount was changed
-            if (reqData.getReimAmount() != request.getReimAmount()) {
+            // Checking if reimbursement amount was changed - Interprets null as (no change)
+            if (reqData.getReimAmount() != null && !reqData.getReimAmount().equals(request.getReimAmount())) {
                 // Reimbursement amount was changed
                 changed = true;
                 // Validating amount is within range
-                if (reqData.getReimAmount() == null || reqData.getReimAmount() < 0 || reqData.getReimAmount() > 999.99) {
-                    log.error("Manager: reimbursement amount is invalid or  isn't within range.");
+                if (reqData.getReimAmount() < 0 || reqData.getReimAmount() > 999.99) {
+                    log.error("Manager: reimbursement amount is invalid or isn't within range.");
                     return new Pair<>(false, 400);
                 }
                 // Reim amount is valid
@@ -442,12 +491,12 @@ public class RequestService {
             
             // === REASON ===
             // Checking if reim amount was changed and reason was provided
-            if (changed && reqData.getReason() == null || reqData.getReason().isBlank()) {
+            if (changed && (reqData.getReason() == null || reqData.getReason().isBlank())) {
                 log.error("Manager: Reimbursement amount was changed and reason wasn't provided or was invalid");
                 return new Pair<>(false, 400);
             }
-            // Checking if reason was changed
-            else if (reqData.getReason() != request.getReason()) {
+            // Checking if reason was changed - Interprets null as no change
+            else if (reqData.getReason() != null && !reqData.getReason().equals(request.getReason())) {
                 // Reason was changed
                 changed = true;
                 // Reason already valid
@@ -455,15 +504,10 @@ public class RequestService {
             }
             
             // === STATUS ===
-            // Checking if status was changed
-            if (reqData.getStatus() != request.getStatus()) {
+            // Checking if status was changed - Ignores null
+            if (reqData.getStatus() != null && reqData.getStatus() != request.getStatus()) {
                 // Status changed
                 changed = true;
-                // Validating status
-                if (reqData.getStatus() == null) {
-                    log.error("Manager: status is invalid");
-                    return new Pair<>(false, 400);
-                }
                 // Checking if status was set to approved
                 if (reqData.getStatus() == RequestStatus.APPROVED) {
                     log.info("Request was approved: Sending funds to employee who owned the request");
@@ -512,44 +556,5 @@ public class RequestService {
         }
         
         return new Pair<>(result, status);
-    }
-    
-    /*
-     * === UTILITY ===
-     */
-    
-    /**
-     * Determines if the given grade is an acceptable value for the given grade format.
-     * @param gradeFormat The grade format.
-     * @param grade The grade to test against the format.
-     * @return True if the grade is an acceptable value, and false otherwise.
-     */
-    private boolean validateGrade(GradeFormatType gradeFormat, String grade) {
-        // Going through possible values for grade format
-        for (String accGrade: GradeFormatType.getPossibleGradesFromType(gradeFormat)) {
-            if (accGrade.equals(grade)) {
-                return true;
-            }
-        }
-        
-        return false;
-    }
-    
-    /**
-     * Retrieves the filters based on the given string.
-     * @param statusFilter The statuses to filter by.
-     * @return An array of desired statuses to filter by.
-     */
-    private RequestStatus[] getFilters(String statusFilter) {
-        RequestStatus[] filter = null;
-        if (statusFilter != null) {
-            if (statusFilter.equalsIgnoreCase("PENDING")) {
-                filter = RequestStatus.getPending();
-            }
-            else if (statusFilter.equalsIgnoreCase("FINISHED")) {
-                filter = RequestStatus.getFinished();
-            }
-        }
-        return filter;
     }
 }

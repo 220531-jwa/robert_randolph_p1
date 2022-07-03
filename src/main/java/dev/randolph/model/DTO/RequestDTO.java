@@ -5,7 +5,6 @@ import dev.randolph.model.Request;
 public class RequestDTO {
     
     // Employee - Associated with request
-    private String username;
     private String firstName;
     private String lastName;
     private Double reimFunds;
@@ -16,21 +15,12 @@ public class RequestDTO {
     
     public RequestDTO() {}
 
-    public RequestDTO(String username, String firstName, String lastName, Double reimFunds, Request request) {
+    public RequestDTO(String firstName, String lastName, Double reimFunds, Request request) {
         super();
-        this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.reimFunds = reimFunds;
         this.request = request;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getFirstName() {
@@ -71,7 +61,7 @@ public class RequestDTO {
 
     @Override
     public String toString() {
-        return "RequestDTO [username=" + username + ", firstName=" + firstName + ", lastName=" + lastName
-                + ", reimFunds=" + reimFunds + ", request=" + request + ", meta=" + meta + "]";
+        return "RequestDTO [firstName=" + firstName + ", lastName=" + lastName + ", reimFunds=" + reimFunds
+                + ", request=" + request + ", meta=" + meta + "]";
     }
 }

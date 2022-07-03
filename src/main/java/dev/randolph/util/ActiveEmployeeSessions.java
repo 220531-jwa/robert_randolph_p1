@@ -60,6 +60,16 @@ public class ActiveEmployeeSessions {
     }
     
     /**
+     * Removes all active employees, logging every user out.
+     */
+    public static void clearAllActiveSessions() {
+        log.debug("Removing all active sessions");
+        for (String token: activeEmployees.keySet()) {
+            removeActiveEmployee(token);
+        }
+    }
+    
+    /**
      * Retrieves the username of the given token.
      * If the token isn't associated with an active session returns null.
      * @param token The token associated with the username for an active session.

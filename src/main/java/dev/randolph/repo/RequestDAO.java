@@ -87,7 +87,7 @@ public class RequestDAO {
         String sql = "select username, first_name, last_name, r.*"
                 + " from employees, requests r"
                 + " where username = employee_username";
-        ArrayList<RequestDTO> requests = new ArrayList<>();
+        ArrayList<RequestDTO> requests = null;
         
         sql = addStatusFilters(sql, filter);
         
@@ -97,9 +97,12 @@ public class RequestDAO {
             setStatusFilters(ps, 1, filter);
             ResultSet rs = ps.executeQuery();
             
-            while (rs.next()) {
+            if (rs.next()) {
                 // Found requests
-                requests.add(createRequestDTO(rs, false));
+                requests = new ArrayList<RequestDTO>();
+                do {
+                    requests.add(createRequestDTO(rs, false));
+                } while (rs.next());
             }
         } catch (SQLException e) {
             log.error("Failed to execute query " + sql);
@@ -155,7 +158,7 @@ public class RequestDAO {
      * @param rid The id of the request.
      * @return A RequestDTO if successful, and null otherwise.
      */
-    public RequestDTO getAllEmployeeRequestById(String username, Integer rid) {
+    public RequestDTO getEmployeeRequestById(String username, Integer rid) {
         log.debug("Recieved username: " + username + " rid: " + rid);
         String sql = "select username, first_name, last_name, reimbursement_funds, r.*"
                 + " from employees, requests r"
@@ -292,8 +295,8 @@ public class RequestDAO {
                 RequestStatus.valueOf(rs.getString("status")),
                 rs.getDouble("request_cost"),
                 rs.getDouble("reimbursement_amount"),
-                rs.getString("grade"),
                 GradeFormatType.valueOf(rs.getString("grade_format")),
+                rs.getString("grade"),
                 rs.getString("cutoff"),
                 rs.getString("justification"),
                 rs.getTimestamp("submission_date"),
@@ -317,7 +320,6 @@ public class RequestDAO {
      */
     private RequestDTO createRequestDTO(ResultSet rs, boolean reimFunds) throws SQLException {
         RequestDTO req = new RequestDTO(
-                rs.getString("username"),
                 rs.getString("first_name"),
                 rs.getString("last_name"),
                 reimFunds ? rs.getDouble("reimbursement_funds") : null,

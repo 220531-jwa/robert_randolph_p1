@@ -14,8 +14,8 @@ public class Request {
     private RequestStatus status;       // Automatic -> Updated
     private Double cost;                // Provided by user
     private Double reimAmount;          // Automatic -> Updated Manager after creation
-    private String grade;               // Provided by User -> After creation
     private GradeFormatType gradeFormat;// Provided by User
+    private String grade;               // Provided by User -> After creation
     private String cutoff;              // Provided by User
     private String justification;       // Provided by User
     private Timestamp startDate;        // Provided by User
@@ -29,7 +29,7 @@ public class Request {
     public Request() {}
 
     public Request(Integer id, String employeeUsername, EventType eventType, RequestStatus status, Double cost,
-            Double reimAmount, String grade, GradeFormatType gradeFormat, String cutoff, String justification,
+            Double reimAmount, GradeFormatType gradeFormat, String grade, String cutoff, String justification,
             Timestamp startDate, Timestamp submissionDate, String eventLocation, String eventDescription,
             Boolean isUrgent, Boolean exceedsFunds, String reason) {
         super();
@@ -39,8 +39,8 @@ public class Request {
         this.status = status;
         this.cost = cost;
         this.reimAmount = reimAmount;
-        this.grade = grade;
         this.gradeFormat = gradeFormat;
+        this.grade = grade;
         this.cutoff = cutoff;
         this.justification = justification;
         this.startDate = startDate;
@@ -100,20 +100,20 @@ public class Request {
         this.reimAmount = reimAmount;
     }
 
-    public String getGrade() {
-        return grade;
-    }
-
-    public void setGrade(String grade) {
-        this.grade = grade;
-    }
-
     public GradeFormatType getGradeFormat() {
         return gradeFormat;
     }
 
     public void setGradeFormat(GradeFormatType gradeFormat) {
         this.gradeFormat = gradeFormat;
+    }
+
+    public String getGrade() {
+        return grade;
+    }
+
+    public void setGrade(String grade) {
+        this.grade = grade;
     }
 
     public String getCutoff() {
@@ -191,8 +191,8 @@ public class Request {
     @Override
     public String toString() {
         return "Request [id=" + id + ", employeeUsername=" + employeeUsername + ", eventType=" + eventType + ", status="
-                + status + ", cost=" + cost + ", reimAmount=" + reimAmount + ", grade=" + grade + ", gradeFormat="
-                + gradeFormat + ", cutoff=" + cutoff + ", justification=" + justification + ", startDate=" + startDate
+                + status + ", cost=" + cost + ", reimAmount=" + reimAmount + ", gradeFormat=" + gradeFormat + ", grade="
+                + grade + ", cutoff=" + cutoff + ", justification=" + justification + ", startDate=" + startDate
                 + ", submissionDate=" + submissionDate + ", eventLocation=" + eventLocation + ", eventDescription="
                 + eventDescription + ", isUrgent=" + isUrgent + ", exceedsFunds=" + exceedsFunds + ", reason=" + reason
                 + "]";

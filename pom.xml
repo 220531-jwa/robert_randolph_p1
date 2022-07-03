@@ -10,7 +10,7 @@
 	</properties>
 
 	<dependencies>
-		<!-- HTTP & Database -->
+		<!-- === HTTP & Database === -->
 		<dependency>
 			<groupId>io.javalin</groupId>
 			<artifactId>javalin</artifactId>
@@ -26,20 +26,34 @@
 			<artifactId>postgresql</artifactId>
 			<version>42.3.6</version>
 		</dependency>
-		<!-- JSON -->
 		<dependency>
+			<!-- JSON -->
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 			<version>2.13.3</version>
 		</dependency>
-		<!-- Testing -->
+		<!-- === Testing === -->
+		<!-- JUnit -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
 			<version>5.8.2</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- Logging -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-params</artifactId>
+			<version>5.8.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<!-- Mockito -->
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-junit-jupiter</artifactId>
+			<version>4.6.1</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- === Logging === -->
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>

@@ -10,8 +10,17 @@ import kotlin.Pair;
 
 public class EmployeeService {
     
-    private EmployeeDAO empDAO = new EmployeeDAO();
+    private EmployeeDAO empDAO;
     private static Logger log = LogManager.getLogger(EmployeeService.class);
+    
+    public EmployeeService() {
+        empDAO = new EmployeeDAO();
+    }
+    
+    public EmployeeService(EmployeeDAO empDAO) {
+        super();
+        this.empDAO = empDAO;
+    }
     
     /*
      * === POST / CREATE ===
