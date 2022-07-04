@@ -1,0 +1,3539 @@
+{
+	"info": {
+		"_postman_id": "9ec40ce8-c293-4d8a-a772-dafa3aa5edb4",
+		"name": "Project01",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21264124"
+	},
+	"item": [
+		{
+			"name": "Setup",
+			"item": [
+				{
+					"name": "Employee - Login",
+					"item": [
+						{
+							"name": "Valid Credentials - Employee",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Init\r",
+											"const jsonData = pm.response.json();\r",
+											"pm.environment.set(\"employeeToken\", jsonData.password);\r",
+											"\r",
+											"// Tests\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Got Correct User\", function () {\r",
+											"    pm.expect(jsonData.username).to.eql(\"user1\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Got Correct Employee Type\", function () {\r",
+											"    pm.expect(jsonData.type).to.eql(\"EMPLOYEE\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"user1\",\r\n    \"password\": \"pass1\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Valid Credentials - Manager",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Init\r",
+											"const jsonData = pm.response.json();\r",
+											"pm.environment.set(\"managerToken\", jsonData.password);\r",
+											"\r",
+											"// Tests\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Got Correct User\", function () {\r",
+											"    pm.expect(jsonData.username).to.eql(\"admin1\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Got Correct Employee Type\", function () {\r",
+											"    pm.expect(jsonData.type).to.eql(\"MANAGER\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"admin1\",\r\n    \"password\": \"secret1\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - NullBlank",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": null,\r\n    \"password\": \"\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - UserDoesNotExist",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"user\",\r\n    \"password\": \"pass\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - CredentialsDoNotMatch",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"user1\",\r\n    \"password\": \"pass\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"login"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Tests - Need Active Session Token From Setup",
+			"item": [
+				{
+					"name": "Employee - Get Employee By Username",
+					"item": [
+						{
+							"name": "Valid - Employee - Self",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Init\r",
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Got Correct Employee\", function () {\r",
+											"    pm.expect(jsonData.username).to.eql(\"user1\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{employeeToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/employee/user1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"employee",
+										"user1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Valid - Manager - Self",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Init\r",
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Got Correct Employee\", function () {\r",
+											"    pm.expect(jsonData.username).to.eql(\"admin1\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/employee/admin1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"employee",
+										"admin1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - DidNotSendToken",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "noActive",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/employee/user1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"employee",
+										"user1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - UserNotActive",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "notActive",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/employee/user1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"employee",
+										"user1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - Employee - OtherEmployee - NotAuthorized",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 403\", function () {\r",
+											"    pm.response.to.have.status(403);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{employeeToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/employee/user2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"employee",
+										"user2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - Manager - OtherEmployee - NotAuthorized",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 403\", function () {\r",
+											"    pm.response.to.have.status(403);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/employee/user2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"employee",
+										"user2"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Request - Get All Requests",
+					"item": [
+						{
+							"name": "Valid - Manager - NoFilter/ALL",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Init\r",
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"// Tests\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Got all 8 requests\", function () {\r",
+											"    pm.expect(jsonData.length).to.eql(8);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/request",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Valid - Manager - PENDING",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Init\r",
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"// Tests\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Got all 4 requests\", function () {\r",
+											"    pm.expect(jsonData.length).to.eql(4);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"All requests are Pending\", function () {\r",
+											"    let pending = jsonData[0].meta.statuses[0];\r",
+											"    for (item of jsonData) {\r",
+											"        pm.expect(pending.includes(item.request.status)).to.eq(true);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/request?statusFilter=PENDING",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request"
+									],
+									"query": [
+										{
+											"key": "statusFilter",
+											"value": "PENDING"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Valid - Manager - FINISHED",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Init\r",
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"// Tests\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Got all 4 requests\", function () {\r",
+											"    pm.expect(jsonData.length).to.eql(4);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"All requests are Finished\", function () {\r",
+											"    let pending = jsonData[0].meta.statuses[1];\r",
+											"    for (item of jsonData) {\r",
+											"        pm.expect(pending.includes(item.request.status)).to.eq(true);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/request?statusFilter=FINISHED",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request"
+									],
+									"query": [
+										{
+											"key": "statusFilter",
+											"value": "FINISHED"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - DidNotSendToken",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/request",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request"
+									],
+									"query": [
+										{
+											"key": "statusFilter",
+											"value": "FINISHED",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - UserNotActive",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "notActive",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/request",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request"
+									],
+									"query": [
+										{
+											"key": "statusFilter",
+											"value": "FINISHED",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - Employee - NotAuthorized",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 403\", function () {\r",
+											"    pm.response.to.have.status(403);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{employeeToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/request",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request"
+									],
+									"query": [
+										{
+											"key": "statusFilter",
+											"value": "FINISHED",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Request - Get All Employee Requests",
+					"item": [
+						{
+							"name": "Valid - Employee - Self - NoFilter/ALL",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Init\r",
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"// Tests\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Got all 3 requests\", function () {\r",
+											"    pm.expect(jsonData.length).to.eql(3);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"All requests are associated with user1\", function () {\r",
+											"    for (item of jsonData) {\r",
+											"        pm.expect(item.request.employeeUsername).to.eq(\"user1\");\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{employeeToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/request/user1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Valid - Employee - Self - PENDING",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Init\r",
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"// Tests\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Got all 2 requests\", function () {\r",
+											"    pm.expect(jsonData.length).to.eql(2);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"All requests are associated with user1\", function () {\r",
+											"    for (item of jsonData) {\r",
+											"        pm.expect(item.request.employeeUsername).to.eq(\"user1\");\r",
+											"    }\r",
+											"});\r",
+											"\r",
+											"pm.test(\"All requests are Pending\", function () {\r",
+											"    let pending = jsonData[0].meta.statuses[0];\r",
+											"    for (item of jsonData) {\r",
+											"        pm.expect(pending.includes(item.request.status)).to.eq(true);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{employeeToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/request/user1?statusFilter=PENDING",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user1"
+									],
+									"query": [
+										{
+											"key": "statusFilter",
+											"value": "PENDING"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Valid - Employee - Self - FINISHED",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Init\r",
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"// Tests\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Got all 1 requests\", function () {\r",
+											"    pm.expect(jsonData.length).to.eql(1);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"All requests are associated with user1\", function () {\r",
+											"    for (item of jsonData) {\r",
+											"        pm.expect(item.request.employeeUsername).to.eq(\"user1\");\r",
+											"    }\r",
+											"});\r",
+											"\r",
+											"pm.test(\"All requests are Finished\", function () {\r",
+											"    let pending = jsonData[0].meta.statuses[1];\r",
+											"    for (item of jsonData) {\r",
+											"        pm.expect(pending.includes(item.request.status)).to.eq(true);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{employeeToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/request/user1?statusFilter=FINISHED",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user1"
+									],
+									"query": [
+										{
+											"key": "statusFilter",
+											"value": "FINISHED"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Valid - Manager - Self - NoFilter/ALL",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Init\r",
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"// Tests\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Got all 2 requests\", function () {\r",
+											"    pm.expect(jsonData.length).to.eql(2);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"All requests are associated with admin1\", function () {\r",
+											"    for (item of jsonData) {\r",
+											"        pm.expect(item.request.employeeUsername).to.eq(\"admin1\");\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/request/admin1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"admin1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Valid - Manager - Self - PENDING",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Init\r",
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"// Tests\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Got all 1 requests\", function () {\r",
+											"    pm.expect(jsonData.length).to.eql(1);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"All requests are associated with admin1\", function () {\r",
+											"    for (item of jsonData) {\r",
+											"        pm.expect(item.request.employeeUsername).to.eq(\"admin1\");\r",
+											"    }\r",
+											"});\r",
+											"\r",
+											"pm.test(\"All requests are Pending\", function () {\r",
+											"    let pending = jsonData[0].meta.statuses[0];\r",
+											"    for (item of jsonData) {\r",
+											"        pm.expect(pending.includes(item.request.status)).to.eq(true);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/request/admin1?statusFilter=PENDING",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"admin1"
+									],
+									"query": [
+										{
+											"key": "statusFilter",
+											"value": "PENDING"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Valid - Manager - Self - FINISHED",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Init\r",
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"// Tests\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Got all 1 requests\", function () {\r",
+											"    pm.expect(jsonData.length).to.eql(1);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"All requests are associated with admin1\", function () {\r",
+											"    for (item of jsonData) {\r",
+											"        pm.expect(item.request.employeeUsername).to.eq(\"admin1\");\r",
+											"    }\r",
+											"});\r",
+											"\r",
+											"pm.test(\"All requests are Finished\", function () {\r",
+											"    let pending = jsonData[0].meta.statuses[1];\r",
+											"    for (item of jsonData) {\r",
+											"        pm.expect(pending.includes(item.request.status)).to.eq(true);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/request/admin1?statusFilter=FINISHED",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"admin1"
+									],
+									"query": [
+										{
+											"key": "statusFilter",
+											"value": "FINISHED"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Valid - Manager - OtherEmployee - NoFilter/ALL",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Init\r",
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"// Tests\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Got all 3 requests\", function () {\r",
+											"    pm.expect(jsonData.length).to.eql(3);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"All requests are associated with user1\", function () {\r",
+											"    for (item of jsonData) {\r",
+											"        pm.expect(item.request.employeeUsername).to.eq(\"user1\");\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/request/user1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Valid - Manager - OtherEmployee - PENDING",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Init\r",
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"// Tests\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Got all 2 requests\", function () {\r",
+											"    pm.expect(jsonData.length).to.eql(2);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"All requests are associated with user1\", function () {\r",
+											"    for (item of jsonData) {\r",
+											"        pm.expect(item.request.employeeUsername).to.eq(\"user1\");\r",
+											"    }\r",
+											"});\r",
+											"\r",
+											"pm.test(\"All requests are Pending\", function () {\r",
+											"    let pending = jsonData[0].meta.statuses[0];\r",
+											"    for (item of jsonData) {\r",
+											"        pm.expect(pending.includes(item.request.status)).to.eq(true);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/request/user1?statusFilter=PENDING",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user1"
+									],
+									"query": [
+										{
+											"key": "statusFilter",
+											"value": "PENDING"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Valid - Manager - OtherEmployee - FINISHED",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Init\r",
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"// Tests\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Got all 1 requests\", function () {\r",
+											"    pm.expect(jsonData.length).to.eql(1);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"All requests are associated with user1\", function () {\r",
+											"    for (item of jsonData) {\r",
+											"        pm.expect(item.request.employeeUsername).to.eq(\"user1\");\r",
+											"    }\r",
+											"});\r",
+											"\r",
+											"pm.test(\"All requests are Finished\", function () {\r",
+											"    let pending = jsonData[0].meta.statuses[1];\r",
+											"    for (item of jsonData) {\r",
+											"        pm.expect(pending.includes(item.request.status)).to.eq(true);\r",
+											"    }\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/request/user1?statusFilter=FINISHED",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user1"
+									],
+									"query": [
+										{
+											"key": "statusFilter",
+											"value": "FINISHED"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - DidNotSendToken",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/request/user1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user1"
+									],
+									"query": [
+										{
+											"key": "statusFilter",
+											"value": "FINISHED",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - UserNotActive",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "notActive",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/request/user1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user1"
+									],
+									"query": [
+										{
+											"key": "statusFilter",
+											"value": "FINISHED",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - Employee - OtherEmployee - NotAuthorized",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 403\", function () {\r",
+											"    pm.response.to.have.status(403);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{employeeToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/request/user2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user2"
+									],
+									"query": [
+										{
+											"key": "statusFilter",
+											"value": "FINISHED",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - Manager - OtherEmployee - EmployeeDoesNotExist",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/request/user5",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user5"
+									],
+									"query": [
+										{
+											"key": "statusFilter",
+											"value": "FINISHED",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Request - Get Employee Request By Id",
+					"item": [
+						{
+							"name": "Valid - Employee - Self",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Init\r",
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"// Tests\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Got Correct Employee\", function () {\r",
+											"    pm.expect(jsonData.request.employeeUsername).to.eql(\"user1\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Got Correct Request\", function () {\r",
+											"    pm.expect(jsonData.request.id).to.eql(3);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{employeeToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/request/user1/3",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user1",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Valid - Manager - Self",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Init\r",
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"// Tests\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Got Correct Employee\", function () {\r",
+											"    pm.expect(jsonData.request.employeeUsername).to.eql(\"admin1\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Got Correct Request\", function () {\r",
+											"    pm.expect(jsonData.request.id).to.eql(1);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/request/admin1/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"admin1",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Valid - Manager - OtherEmployee",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// Init\r",
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"// Tests\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Got Correct Employee\", function () {\r",
+											"    pm.expect(jsonData.request.employeeUsername).to.eql(\"user1\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Got Correct Request\", function () {\r",
+											"    pm.expect(jsonData.request.id).to.eql(3);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/request/user1/3",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user1",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - DidNotSendToken",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/request/user1/3",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user1",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - UserNotActive",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 401\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "notActive",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/request/user1/3",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user1",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - Employee - OtherEmployee - NotAuthorized",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 403\", function () {\r",
+											"    pm.response.to.have.status(403);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{employeeToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/request/admin1/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"admin1",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - Manager - OtherEmployee - EmployeeDoesNotExist",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/request/user5/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user5",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - Manager - OtherEmployee - RequestDoesNotExist",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/request/user1/10",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user1",
+										"10"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - Manager - OtherEmployee - RequestNotAssociatedWithEmployee",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 404\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/request/user1/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user1",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Request - Create New Request",
+					"item": [
+						{
+							"name": "Valid - Employee - Self",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// NOTE: JSON startDate is : 2022-06-01 12:13:14\r",
+											"pm.test(\"Status code is 201\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{employeeToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"eventType\": \"CERTIFICATION\",\r\n    \"cost\": \"100.00\",\r\n    \"gradeFormat\": \"PASSFAIL\",\r\n    \"cutoff\": \"P\",\r\n    \"eventDescription\": \"desc\",\r\n    \"eventLocation\": \"loc\",\r\n    \"startDate\": \"1654107194\",\r\n    \"justification\": \"just\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/request/user1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Valid - Manager - Self",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// NOTE: JSON startDate is : 2022-06-01 12:13:14\r",
+											"pm.test(\"Status code is 201\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"eventType\": \"CERTIFICATION\",\r\n    \"cost\": \"100.00\",\r\n    \"gradeFormat\": \"PASSFAIL\",\r\n    \"cutoff\": \"P\",\r\n    \"eventDescription\": \"desc\",\r\n    \"eventLocation\": \"loc\",\r\n    \"startDate\": \"1654107194\",\r\n    \"justification\": \"just\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/request/admin1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"admin1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - DidNotSendToken",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// NOTE: JSON startDate is : 2022-06-01 12:13:14\r",
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"eventType\": \"CERTIFICATION\",\r\n    \"cost\": \"100.00\",\r\n    \"gradeFormat\": \"PASSFAIL\",\r\n    \"cutoff\": \"P\",\r\n    \"eventDescription\": \"desc\",\r\n    \"eventLocation\": \"loc\",\r\n    \"startDate\": \"1654107194\",\r\n    \"justification\": \"just\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/request/user1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - UserNotActive",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// NOTE: JSON startDate is : 2022-06-01 12:13:14\r",
+											"pm.test(\"Status code is 401\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Token",
+										"value": "notActive",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"eventType\": \"CERTIFICATION\",\r\n    \"cost\": \"100.00\",\r\n    \"gradeFormat\": \"PASSFAIL\",\r\n    \"cutoff\": \"P\",\r\n    \"eventDescription\": \"desc\",\r\n    \"eventLocation\": \"loc\",\r\n    \"startDate\": \"1654107194\",\r\n    \"justification\": \"just\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/request/user1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - BodyMissingRequiredFields",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// NOTE: JSON startDate is : 2022-06-01 12:13:14\r",
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{employeeToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"cost\": \"100.00\",\r\n    \"gradeFormat\": \"PASSFAIL\",\r\n    \"cutoff\": \"P\",\r\n    \"eventDescription\": \"desc\",\r\n    \"eventLocation\": \"loc\",\r\n    \"startDate\": \"1654107194\",\r\n    \"justification\": \"just\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/request/user1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - CostOutOfRange",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// NOTE: JSON startDate is : 2022-06-01 12:13:14\r",
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{employeeToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"eventType\": \"CERTIFICATION\",\r\n    \"cost\": \"10000.00\",\r\n    \"gradeFormat\": \"PASSFAIL\",\r\n    \"cutoff\": \"P\",\r\n    \"eventDescription\": \"desc\",\r\n    \"eventLocation\": \"loc\",\r\n    \"startDate\": \"1654107194\",\r\n    \"justification\": \"just\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/request/user1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - Employee - OtherEmployee - NotAuthorized",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// NOTE: JSON startDate is : 2022-06-01 12:13:14\r",
+											"pm.test(\"Status code is 403\", function () {\r",
+											"    pm.response.to.have.status(403);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{employeeToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"eventType\": \"CERTIFICATION\",\r\n    \"cost\": \"100.00\",\r\n    \"gradeFormat\": \"PASSFAIL\",\r\n    \"cutoff\": \"P\",\r\n    \"eventDescription\": \"desc\",\r\n    \"eventLocation\": \"loc\",\r\n    \"startDate\": \"1654107194\",\r\n    \"justification\": \"just\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/request/user2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - Manager - OtherEmployee - NotAuthorized",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// NOTE: JSON startDate is : 2022-06-01 12:13:14\r",
+											"pm.test(\"Status code is 403\", function () {\r",
+											"    pm.response.to.have.status(403);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"eventType\": \"CERTIFICATION\",\r\n    \"cost\": \"100.00\",\r\n    \"gradeFormat\": \"PASSFAIL\",\r\n    \"cutoff\": \"P\",\r\n    \"eventDescription\": \"desc\",\r\n    \"eventLocation\": \"loc\",\r\n    \"startDate\": \"1654107194\",\r\n    \"justification\": \"just\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/request/user2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user2"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Request - Update Request",
+					"item": [
+						{
+							"name": "Valid - Employee - Self - Grade",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// NOTE: JSON startDate is : 2022-06-01 12:13:14\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{employeeToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"grade\": \"P\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/request/user1/3",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user1",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Valid - Employee - Self - StatusCancelled",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// NOTE: JSON startDate is : 2022-06-01 12:13:14\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{employeeToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"status\": \"CANCELLED\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/request/user1/3",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user1",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Valid - Manager - Self - Grade",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// NOTE: JSON startDate is : 2022-06-01 12:13:14\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"grade\": \"A\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/request/admin1/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"admin1",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Valid - Manager - Self - StatusCancelled",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// NOTE: JSON startDate is : 2022-06-01 12:13:14\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"status\": \"CANCELLED\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/request/admin1/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"admin1",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Valid - Manager - OtherEmployee - ReimAmount_WithReason",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// NOTE: JSON startDate is : 2022-06-01 12:13:14\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"reimAmount\": \"250.00\",\r\n    \"reason\": \"Increased amount to half the cost from 1/5. Employee did good job\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/request/user1/4",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user1",
+										"4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Valid - Manager - OtherEmployee - Reason",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// NOTE: JSON startDate is : 2022-06-01 12:13:14\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"reason\": \"Random Reason\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/request/user2/6",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user2",
+										"6"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Valid - Manager - OtherEmployee - StatusApprove",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// NOTE: JSON startDate is : 2022-06-01 12:13:14\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"status\": \"APPROVED\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/request/user2/6",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user2",
+										"6"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - DidNotSendToken",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// NOTE: JSON startDate is : 2022-06-01 12:13:14\r",
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{employeeToken}}",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"grade\": \"A\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/request/user1/4",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user1",
+										"4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - UserNotActive",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// NOTE: JSON startDate is : 2022-06-01 12:13:14\r",
+											"pm.test(\"Status code is 401\", function () {\r",
+											"    pm.response.to.have.status(401);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Token",
+										"value": "notActive",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"grade\": \"A\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/request/user1/4",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user1",
+										"4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - Employee - Self - GradeDoesNotMatchFormat",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// NOTE: JSON startDate is : 2022-06-01 12:13:14\r",
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{employeeToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"grade\": \"P\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/request/user1/4",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user1",
+										"4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - Employee - Self - StatusCanOnlyBeCancelled",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// NOTE: JSON startDate is : 2022-06-01 12:13:14\r",
+											"pm.test(\"Status code is 403\", function () {\r",
+											"    pm.response.to.have.status(403);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{employeeToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"status\": \"APPROVED\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/request/user1/4",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user1",
+										"4"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - Employee - OtherEmployee - NotAuthorized",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// NOTE: JSON startDate is : 2022-06-01 12:13:14\r",
+											"pm.test(\"Status code is 403\", function () {\r",
+											"    pm.response.to.have.status(403);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{employeeToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"grade\": \"A\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/request/admin1/2",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"admin1",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - Manager - Self - CanNotApproveSelf",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// NOTE: JSON startDate is : 2022-06-01 12:13:14\r",
+											"pm.test(\"Status code is 403\", function () {\r",
+											"    pm.response.to.have.status(403);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"status\": \"APPROVED\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/request/admin1/9",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"admin1",
+										"9"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - Manager - OtherEmployee - EmployeeDoesNotExist",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// NOTE: JSON startDate is : 2022-06-01 12:13:14\r",
+											"pm.test(\"Status code is 404\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"reason\": \"new reason\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/request/admin3/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"admin3",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - Manager - OtherEmployee - RequestDoesNotExist",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// NOTE: JSON startDate is : 2022-06-01 12:13:14\r",
+											"pm.test(\"Status code is 404\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"reason\": \"new reason\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/request/user1/10",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user1",
+										"10"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - Manager - OtherEmployee - RequestNotAssociatedWithEmployee",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// NOTE: JSON startDate is : 2022-06-01 12:13:14\r",
+											"pm.test(\"Status code is 404\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"reason\": \"new reason\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/request/user1/6",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user1",
+										"6"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invalid - Manager - OtherEmployee - ReimChangedWithNoReason",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"// NOTE: JSON startDate is : 2022-06-01 12:13:14\r",
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"reimAmount\": \"0.00\",\r\n    \"reason\": \"\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/request/user1/4",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"request",
+										"user1",
+										"4"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Meta - Get Meta Data",
+					"item": [
+						{
+							"name": "Valid",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body has Statuses\", function () {\r",
+											"    pm.response.to.have.jsonBody(\"statuses\")\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body has Grade Formats\", function () {\r",
+											"    pm.response.to.have.jsonBody(\"gradeFormats\")\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body has Events\", function () {\r",
+											"    pm.response.to.have.jsonBody(\"events\")\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/meta",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"meta"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Cleanup",
+			"item": [
+				{
+					"name": "Employee - Logout",
+					"item": [
+						{
+							"name": "Valid - Employee",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{employeeToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/logout",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"logout"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Valid - Manager",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Body is Empty\", function () {\r",
+											"    pm.response.to.have.body(\"\");\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{managerToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:8080/logout",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"logout"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}

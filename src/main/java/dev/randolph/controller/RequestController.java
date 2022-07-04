@@ -43,7 +43,7 @@ public class RequestController {
         // Checking if request was created
         if (result.getFirst()) {
             log.info("Successfully created request");
-            c.json(result.getFirst());
+//            c.json(result.getFirst());
         }
         
         c.status(result.getSecond());
@@ -156,8 +156,8 @@ public class RequestController {
         
         // Checking if request was created
         if (result.getFirst()) {
-            log.info("Successfully created request");
-            c.json(result.getFirst());
+            log.info("Successfully updated request");
+//            c.json(result.getFirst());
         }
     
         c.status(result.getSecond());

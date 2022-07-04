@@ -494,6 +494,7 @@ public class RequestService {
                 }
                 // Reim amount is valid
                 request.setReimAmount(reqData.getReimAmount());
+                request.setExceedsFunds(true);  // marked as exceeds funds for reporting purposes
             }
             
             // === REASON ===
