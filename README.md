@@ -44,10 +44,12 @@ To-do & Improvements list:
 * Add ability to add new event types
 * Add ability to add new grade formats
 * Add ability to upload presentation/supporting documents to request
-* Update client-server authentication/security
-* Update server to initialize enum/type data from database. (i.e. event types)
-* Update server to Minimize/Optimize database calls
-* Update better tracking of avaliable reimbursement funds and whether current pending reimbursements excced the amount
+
+- Update client-server authentication/security
+- Update server to initialize enum/type data from database. (i.e. event types)
+- Update server to Minimize/Optimize database calls
+- Update better tracking of avaliable reimbursement funds and whether current pending reimbursements excced the amount
+- Improve DTOs to be more efficent
 
 ## Getting Started
 
