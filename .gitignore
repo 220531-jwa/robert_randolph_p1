@@ -28,3 +28,4 @@ target/
 .classpath
 .project
 connection.properties
+chromedriver.exe
