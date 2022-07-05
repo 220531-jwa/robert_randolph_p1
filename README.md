@@ -44,6 +44,7 @@ To-do & Improvements list:
 * Add ability to add new event types
 * Add ability to add new grade formats
 * Add ability to upload presentation/supporting documents to request
+* Add table of access rights for employees
 
 - Update client-server authentication/security
 - Update server to initialize enum/type data from database. (i.e. event types)
