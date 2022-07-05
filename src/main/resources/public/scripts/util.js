@@ -58,7 +58,7 @@ async function fetchPostRequest(reqUrl, reqBody) {
     // Processing response
     let data = null;
     if (response.ok) {
-        data = await response.json();
+        // data = await response.json();    // Nothing returned
     }
     else if (response.status === 401) {
         // Not in active session
@@ -92,7 +92,7 @@ async function fetchPatchRequest(reqUrl, reqBody) {
     // Processing response
     let data = null;
     if (response.ok) {
-        data = await response.json();
+        // data = await response.json();    // Nothing returned
     }
     else if (response.status === 401) {
         // Not in active session

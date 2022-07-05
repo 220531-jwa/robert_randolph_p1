@@ -263,7 +263,6 @@ async function updateExistingRequest() {
     // Event Location & Time
     document.getElementById('inputLocation').value = request.eventLocation;
     {
-        console.log(1);
         const pad = (num) => String(num).padStart(2, '0');
         let startts = new Date(request.startDate);
         let startDate = `${startts.getFullYear()}-${pad(startts.getMonth())}-${pad(startts.getDate())}`;
@@ -312,7 +311,7 @@ function createRequest() {
     }
     const formBodyJson = JSON.stringify(formBody);
     console.log('form body');
-    console.log(formBody);
+    console.log(formBodyJson);
 
     return fetchPostRequest(url, formBodyJson);
 }
@@ -392,6 +391,7 @@ async function submit() {
     }
 
     // Getting post response data
+    console.log("yay");
     let result = await createRequest();
     console.log('Got result:');
     console.log(result);
@@ -399,9 +399,11 @@ async function submit() {
     // Checking if submission was successful
     if (result[0] !== 201) {
         // Failed
+        console.log("Failed to submit");
         document.getElementById('error').innerHTML = "Failed to submit. Try again later."
     }
     else {
+        console.log('yay');
         // Success - Moving back to homepage
         back();
     }
