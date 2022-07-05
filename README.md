@@ -48,7 +48,7 @@ To-do & Improvements list:
 - Update client-server authentication/security
 - Update server to initialize enum/type data from database. (i.e. event types)
 - Update server to Minimize/Optimize database calls
-- Update better tracking of avaliable reimbursement funds and whether current pending reimbursements excced the amount
+- Update better tracking of available reimbursement funds and whether current pending reimbursements exceed the amount
 - Improve DTOs to be more efficent
 
 ## Getting Started
